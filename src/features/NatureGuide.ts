@@ -1,59 +1,228 @@
-import {
-  IdentificationKey as IdentificationKeyType,
-  MatrixFilterSpace as MatrixFilterSpaceType,
-  MatrixFilter as MatrixFilterType,
-  NatureGuide as NatureGuideType,
-  NatureGuideOptions, IdentificationKeyReference, IdentificationEvents, MatrixFilterSpaceReference,
-} from "../types/features/NatureGuide";
+import { DetailFeature } from "../Features";
+import { TaxonReference } from "./TaxonProfile";
+import {cloneDeep} from "lodash";
 
-export class NatureGuide implements NatureGuideType {
-  public crossLinks = {};
-  public options = {} as NatureGuideOptions;
-  public globalOptions = {};
-  public isMulticontent = false;
+export type MatrixFilterSpaceReference = {
+  spaceIdentifier: string,
+  encodedSpace: any,
+}
+
+export class MatrixFilterSpace {
+  public spaceIdentifier: string = '';
+  public encodedSpace: any = '';
+  public html?: string
+  public points?: number = 0;
+
+  constructor(init?: Partial<MatrixFilterSpace>) {
+    Object.assign(this, init)
+  }
+}
+
+export type DescriptiveTextAndImagesFilterSpace = MatrixFilterSpace
+export type ColorFilterSpace = MatrixFilterSpace
+export type TextOnlyFilterSpace = MatrixFilterSpace
+export type TaxonFilterSpace = MatrixFilterSpace
+
+export type MatrixFilterType =
+  'DescriptiveTextAndImagesFilter'
+  | 'TextOnlyFilter'
+  | 'ColorFilter'
+  | 'RangeFilter'
+  | 'NumberFilter'
+  | 'TaxonFilter';
+
+type MatrixFilterRestriction = {
+  spaceIdentifier: string
+  encodedSpace: string
+}
+
+export class MatrixFilter {
+  public uuid: string = '';
+  public name: string = '';
+  public description?: string | null = '';
+
+  public weight: number = 1;
+  public allowMultipleValues: boolean = false;
+  public restrictions: Record<string, MatrixFilterRestriction[]> = {};
+  public definition: object = {};
+
+  public space: MatrixFilterSpace[] = [];
+  public position: number = 1;
+
+  public type: MatrixFilterType = "TextOnlyFilter";
+
+  constructor(init?: Partial<MatrixFilterType>) {
+    Object.assign(this, init)
+  }
+
+  addSpace (space: MatrixFilterSpace) {
+    if (!this.space.find(s => s.spaceIdentifier === space.spaceIdentifier)) {
+      this.space.push(space);
+    }
+  }
+}
+
+export class RangeFilter extends MatrixFilter {
+  public encodedSpace: number[] = [];
+
+  /**
+   * We clean up the space identifier to only contain the filter uuid
+   *
+   * @param space
+   */
+  addSpace (space: MatrixFilterSpace) {
+    space.spaceIdentifier = space.spaceIdentifier.split(':')[0];
+    super.addSpace(space);
+  }
+
+  updateEncodedSpace (event: IdentificationEvents, identificationKey: IdentificationKey, payload: {}): void {
+    const { index, encodedSpace } = payload as { index: number, encodedSpace: number[] };
+    if (identificationKey.spaces[index].spaceIdentifier !== this.uuid) {
+      return;
+    }
+
+    // update the internal encoded space and make sure the space becomes selectable
+    this.encodedSpace = encodedSpace;
+    identificationKey.selectedSpaces[index] = 0;
+    this.updateEncodedSpaceMapping(event, identificationKey, index);
+  }
+
+  updateEncodedSpaceMapping (_: IdentificationEvents, identificationKey: IdentificationKey, index: number): void {
+    if (identificationKey.spaces[index].spaceIdentifier !== this.uuid) {
+      return;
+    }
+
+    const space = this.space[0];
+    let newMapping = (new Array(identificationKey.children.length).fill(1));
+    if (this.encodedSpace.length > 0) {
+      newMapping = newMapping.map((_, nodeIndex) => {
+        const filter = identificationKey.children[nodeIndex].space[space.spaceIdentifier];
+        if (filter) {
+          return filter.find((spaceRef: MatrixFilterSpaceReference) => {
+            return (this.encodedSpace[0] >= spaceRef.encodedSpace[0]) &&
+              (this.encodedSpace[0] <= spaceRef.encodedSpace[1]);
+          })
+            ? 1
+            : 0;
+        }
+
+        return 0;
+      });
+    }
+
+    identificationKey.spaceNodeMapping[index] = newMapping;
+  }
+}
+
+export class DescriptiveTextAndImagesFilter extends MatrixFilter {}
+export class ColorFilter extends MatrixFilter {}
+export class NumberFilter extends MatrixFilter {}
+export class TextOnlyFilter extends MatrixFilter {}
+export class TaxonFilter extends MatrixFilter {}
+
+export const MatrixFilterClassMap = {
+  DescriptiveTextAndImagesFilter,
+  ColorFilter,
+  RangeFilter,
+  NumberFilter,
+  TextOnlyFilter,
+  TaxonFilter,
+};
+
+export enum IdentificationEvents {
+  spaceInitialized = 'spaceInitialized',
+  beforeSpaceSelected = 'beforeSpaceSelected',
+  spaceSelected = 'spaceSelected',
+  spaceDeselected = 'spaceDeselected',
+}
+
+export type IdentificationEventCallback = {
+  (eventType: string, identificationKey: IdentificationKey, ...payload: any): void;
+}
+
+export enum NodeTypes {
+  node = 'node',
+  result = 'result',
+}
+
+export enum IdentificationModes {
+  fluid = 'fluid',
+  strict = 'strict',
+}
+
+export type IdentificationKeyReference = {
+  uuid: string
+  nodeType: NodeTypes
+  imageUrl: string // todo: is this actually a lookup dict? 1x, 2x, 4x?
+  space: Record<string, MatrixFilterSpaceReference[]>,
+  maxPoints: number
+  isVisible: boolean
+  name: string
+  decisionRule: string
+  taxon: TaxonReference | null
+  factSheets: any[] // todo: missing type info
+  slug: string
+}
+
+export type ResultAction = {
+  feature: 'TaxonProfiles' | 'GenericForm',
+  uuid: string,
+}
+
+export type NatureGuideOptions = {
+  resultAction: ResultAction
+}
+
+export class NatureGuide implements DetailFeature {
   public name = '';
   public slug = '';
-  public slugs = {};
-  public startNodeUuid = '';
   public uuid = '';
-  public tree = {};
+  public options: NatureGuideOptions | null = null;
+  public globalOptions = {};
   public version: number = 1;
 
-  constructor(init?: Partial<NatureGuideType>) {
+  public crossLinks: any = null;
+  public isMulticontent: boolean = false;
+  public slugs: Record<string, string> = {};
+  public startNodeUuid: string = '';
+
+  // the tree in json format. this means any object in here is not instantiated:
+  // typing is almost identical to the IdentificationKey type without methods and cross-references
+  public tree: Record<string, object> = {};
+
+  constructor(init?: Partial<NatureGuide>) {
     Object.assign(this, init)
   }
 
   getIdentificationKey(uuid: string): IdentificationKey | null {
-    // @ts-ignore
     if (!this.tree[uuid]) {
       return null;
     }
 
-    // @ts-ignore
-    const json = this.tree[uuid] || null;
-
     // instantiating an identification key with the json data:
+    const json = cloneDeep(this.tree[uuid]);
     const filters = { ...json.matrixFilters };
+    const children = [...json.children];
 
-    const key = new IdentificationKey(json);
+    const key = new IdentificationKey({ ...json, matrixFilters: {}, children: [] });
     const spaces: [MatrixFilter, MatrixFilterSpace][] = [];
 
     // add children:
-    json.children.forEach((child: IdentificationKeyReference) => {
+    children.forEach((child: IdentificationKeyReference) => {
       key.addChild(child);
     })
 
     // add filters
-    Object.entries(filters).forEach(([uuid, value]) => {
-      // @ts-ignore
+    Object.values(filters).forEach((value) => {
       const matrixFilterClass = MatrixFilterClassMap[value.type];
       const filter = new matrixFilterClass(value);
 
       key.addMatrixFilter(filter);
 
-      // @ts-ignore
       value.space.forEach((space: MatrixFilterSpaceReference) => {
-        spaces.push([filter, new MatrixFilterSpace(space)]);
+        if (!spaces.find(([_, s]) => s.spaceIdentifier === space.spaceIdentifier)) {
+          spaces.push([filter, new MatrixFilterSpace({ ...space, points: filter.weight || 0 })]);
+        }
       });
     })
 
@@ -65,21 +234,22 @@ export class NatureGuide implements NatureGuideType {
 
     // initial calculation
     key.computeFilterVisibilityRestrictions();
-    key.computeResults();
+    key.computePossibleValues();
 
     return key;
   }
 }
 
-export class IdentificationKey implements IdentificationKeyType {
-  public name = '';
-  public taxon = null;
+export class IdentificationKey {
+  public name: string = '';
+  public taxon: TaxonReference | null = null;
   public children: IdentificationKeyReference[] = [];
-  public childrenCount = 0;
-  public factSheets = [];
-  public slug = '';
-  public overviewImage = '';
+  public childrenCount: number = 0;
+  public factSheets: any[] = [];
+  public slug: string = '';
+  public overviewImage: string = '';
   public matrixFilters: Record<string, MatrixFilter> = {};
+  public identificationMode: IdentificationModes = IdentificationModes.fluid;
 
   /**
    * A matrix that maps spaces to the nodes that they encode for. E.g. if the space "brown" for the filter "color" is
@@ -160,10 +330,7 @@ export class IdentificationKey implements IdentificationKeyType {
 
   private listeners: Record<string, Function[]> = {};
 
-  // @ts-ignore
-  public identificationMode = '';
-
-  constructor(init?: Partial<IdentificationKeyType>) {
+  constructor(init?: Partial<IdentificationKey>) {
     Object.assign(this, init)
   }
 
@@ -208,7 +375,6 @@ export class IdentificationKey implements IdentificationKeyType {
    */
   computeFilterVisibilityRestrictions () {
     this.filterVisibilityRestrictions = Object.values(this.matrixFilters).map((filter) => {
-      // @ts-ignore
       return Object.values(filter.restrictions).map((restriction: MatrixFilterSpace[]) => {
         return restriction.map((space) => {
           return this.findSpaceIndex(space as MatrixFilterSpace);
@@ -325,123 +491,19 @@ export class IdentificationKey implements IdentificationKeyType {
     return this.spaces.findIndex(s => s.spaceIdentifier === space.spaceIdentifier);
   }
 
-  findFilterIndex (filter: MatrixFilterType) {
+  findFilterIndex (filter: MatrixFilter) {
     return Object.values(this.matrixFilters).findIndex(f => f.uuid === filter.uuid);
   }
 
-  isSpaceSelected (space: MatrixFilterSpaceType): boolean {
+  isSpaceSelected (space: MatrixFilterSpace): boolean {
     return this.selectedSpaces[this.findSpaceIndex(space)] === 1;
   }
 
-  isSpacePossible (space: MatrixFilterSpaceType): boolean {
+  isSpacePossible (space: MatrixFilterSpace): boolean {
     return this.possibleSpaces[this.findSpaceIndex(space)] === 1;
   }
 
-  getPointsForSpace (space: MatrixFilterSpaceType): number {
-    // todo: reimplement how to get from space to filter here!
-    return 0 // this.filter?.weight || 0;
-  }
-
-  isFilterVisible (filter: MatrixFilterType): boolean {
+  isFilterVisible (filter: MatrixFilter): boolean {
     return this.visibleFilters[this.findFilterIndex(filter)] === 1;
-  }
-}
-
-export class MatrixFilter implements MatrixFilterType {
-  public uuid = '';
-  public name = '';
-  public weight = 1;
-  public allowMultipleValues = false;
-  public restrictions = {};
-
-  public space: MatrixFilterSpace[] = [];
-  public position = 1;
-
-  // @ts-ignore
-  public type = 'MatrixFilterType';
-
-  constructor(init?: Partial<MatrixFilterType>) {
-    Object.assign(this, init)
-  }
-
-  addSpace (space: MatrixFilterSpace) {
-    this.space.push(space);
-  }
-}
-
-export class RangeFilter extends MatrixFilter {
-  public encodedSpace: number[] = [];
-
-  /**
-   * We clean up the space identifier to only contain the filter uuid
-   *
-   * @param space
-   */
-  addSpace (space: MatrixFilterSpace) {
-    space.spaceIdentifier = space.spaceIdentifier.split(':')[0];
-    super.addSpace(space);
-  }
-
-  updateEncodedSpace (event: IdentificationEvents, identificationKey: IdentificationKey, payload: {}): void {
-    const { index, encodedSpace } = payload as { index: number, encodedSpace: number[] };
-    if (identificationKey.spaces[index].spaceIdentifier !== this.uuid) {
-      return;
-    }
-
-    // update the internal encoded space and make sure the space becomes selectable
-    this.encodedSpace = encodedSpace;
-    identificationKey.selectedSpaces[index] = 0;
-    this.updateEncodedSpaceMapping(event, identificationKey, index);
-  }
-
-  updateEncodedSpaceMapping (_: IdentificationEvents, identificationKey: IdentificationKey, index: number): void {
-    if (identificationKey.spaces[index].spaceIdentifier !== this.uuid) {
-      return;
-    }
-
-    const space = this.space[0];
-    let newMapping = (new Array(identificationKey.children.length).fill(1));
-    if (this.encodedSpace.length > 0) {
-      newMapping = newMapping.map((_, nodeIndex) => {
-        const filter = identificationKey.children[nodeIndex].space[space.spaceIdentifier];
-        if (filter) {
-          return filter.find((spaceRef: MatrixFilterSpaceReference) => {
-            return (this.encodedSpace[0] >= spaceRef.encodedSpace[0]) &&
-              (this.encodedSpace[0] <= spaceRef.encodedSpace[1]);
-          })
-            ? 1
-            : 0;
-        }
-
-        return 0;
-      });
-    }
-
-    identificationKey.spaceNodeMapping[index] = newMapping;
-  }
-}
-
-export class DescriptiveTextAndImagesFilter extends MatrixFilter {}
-export class ColorFilter extends MatrixFilter {}
-export class NumberFilter extends MatrixFilter {}
-export class TextOnlyFilter extends MatrixFilter {}
-export class TaxonFilter extends MatrixFilter {}
-
-export const MatrixFilterClassMap = {
-  DescriptiveTextAndImagesFilter,
-  ColorFilter,
-  RangeFilter,
-  NumberFilter,
-  TextOnlyFilter,
-  TaxonFilter,
-};
-
-
-export class MatrixFilterSpace implements MatrixFilterSpaceType {
-  public spaceIdentifier = '';
-  public encodedSpace = '';
-
-  constructor(init?: Partial<MatrixFilterSpaceType>) {
-    Object.assign(this, init)
   }
 }

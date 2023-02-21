@@ -1,0 +1,1365 @@
+{
+    "uuid": "eca0bdb3-a829-41d4-add9-da1b1f0aa671",
+    "version": 1,
+    "options": {
+        "resultAction": {
+            "feature": "TaxonProfiles",
+            "uuid": "77f74cf6-232f-4e8d-9a99-9f2e98128f1c"
+        }
+    },
+    "globalOptions": {},
+    "name": "Säugetiere am Wasser",
+    "slug": "7-saugetiere-am-wasser",
+    "tree": {
+        "8ce822aa-6472-4f8d-9814-cbe052b5d4d2": {
+            "uuid": "8ce822aa-6472-4f8d-9814-cbe052b5d4d2",
+            "name": "Wassersäuger",
+            "taxon": null,
+            "children": [
+                {
+                    "uuid": "76838f4f-9813-41ee-b133-83c0bdbe3bec",
+                    "nodeType": "result",
+                    "imageUrl": {
+                        "1x": "/localcosmos/user_content/content_images/image-104-250.webp",
+                        "2x": "/localcosmos/user_content/content_images/image-104-500.webp",
+                        "4x": "/localcosmos/user_content/content_images/image-104-1000.webp"
+                    },
+                    "space": {
+                        "96bdc492-b512-4cce-8574-5fd83e06ebfb": [
+                            {
+                                "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:137",
+                                "encodedSpace": [
+                                    0,
+                                    0,
+                                    0,
+                                    1
+                                ]
+                            },
+                            {
+                                "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:142",
+                                "encodedSpace": [
+                                    97,
+                                    54,
+                                    33,
+                                    1
+                                ]
+                            }
+                        ],
+                        "7475b5f8-cfcd-4d1b-8404-3a17941eb91b": [
+                            {
+                                "spaceIdentifier": "7475b5f8-cfcd-4d1b-8404-3a17941eb91b:151",
+                                "encodedSpace": "<p>Fleck hinter dem Auge</p>"
+                            },
+                            {
+                                "spaceIdentifier": "7475b5f8-cfcd-4d1b-8404-3a17941eb91b:156",
+                                "encodedSpace": "<p>Schwimmborsten</p>"
+                            }
+                        ],
+                        "ba7ab486-7428-4292-9755-593a5492d149": [
+                            {
+                                "spaceIdentifier": "ba7ab486-7428-4292-9755-593a5492d149:161",
+                                "encodedSpace": "<p>behaart</p>"
+                            }
+                        ],
+                        "d6a15597-ca2f-4fd4-b976-76f449b16be6": [
+                            {
+                                "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:144",
+                                "encodedSpace": [
+                                    255,
+                                    255,
+                                    255,
+                                    1
+                                ]
+                            }
+                        ],
+                        "75087d20-7447-4ff5-a10b-5495e88074be": [
+                            {
+                                "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:10.0",
+                                "encodedSpace": 10.0
+                            }
+                        ],
+                        "7f496af4-8e98-4bb6-8f3b-09496c3a0efd": [
+                            {
+                                "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:8.0",
+                                "encodedSpace": 8.0
+                            }
+                        ]
+                    },
+                    "maxPoints": 6,
+                    "isPossible": true,
+                    "name": "Wasserspitzmaus",
+                    "decisionRule": "",
+                    "taxon": {
+                        "taxonLatname": "Neomys fodiens",
+                        "taxonAuthor": "(Pennant, 1771)",
+                        "taxonNuid": "00100800a00s00300f002",
+                        "taxonSource": "taxonomy.sources.col",
+                        "nameUuid": "c22eb79c-12e9-46be-9622-9f03bded1848"
+                    },
+                    "slug": "46-wasserspitzmaus"
+                },
+                {
+                    "uuid": "4c92b1d6-b13c-4a73-b081-3708033865e4",
+                    "nodeType": "result",
+                    "imageUrl": {
+                        "1x": "/localcosmos/user_content/content_images/image-106-250.webp",
+                        "2x": "/localcosmos/user_content/content_images/image-106-500.webp",
+                        "4x": "/localcosmos/user_content/content_images/image-106-1000.webp"
+                    },
+                    "space": {
+                        "96bdc492-b512-4cce-8574-5fd83e06ebfb": [
+                            {
+                                "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:138",
+                                "encodedSpace": [
+                                    99,
+                                    7,
+                                    7,
+                                    1
+                                ]
+                            },
+                            {
+                                "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:142",
+                                "encodedSpace": [
+                                    97,
+                                    54,
+                                    33,
+                                    1
+                                ]
+                            }
+                        ],
+                        "ba7ab486-7428-4292-9755-593a5492d149": [
+                            {
+                                "spaceIdentifier": "ba7ab486-7428-4292-9755-593a5492d149:157",
+                                "encodedSpace": "<p>nackt</p>"
+                            },
+                            {
+                                "spaceIdentifier": "ba7ab486-7428-4292-9755-593a5492d149:158",
+                                "encodedSpace": "<p>seitlich gedrückter Querschnitt</p>"
+                            }
+                        ],
+                        "d6a15597-ca2f-4fd4-b976-76f449b16be6": [
+                            {
+                                "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:173",
+                                "encodedSpace": [
+                                    210,
+                                    210,
+                                    210,
+                                    1
+                                ]
+                            }
+                        ],
+                        "75087d20-7447-4ff5-a10b-5495e88074be": [
+                            {
+                                "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:40.0",
+                                "encodedSpace": 40.0
+                            }
+                        ],
+                        "7f496af4-8e98-4bb6-8f3b-09496c3a0efd": [
+                            {
+                                "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:26.0",
+                                "encodedSpace": 26.0
+                            }
+                        ],
+                        "da1bbf44-0a6c-4ab4-8853-78d271442644": [
+                            {
+                                "spaceIdentifier": "da1bbf44-0a6c-4ab4-8853-78d271442644:179",
+                                "encodedSpace": "<p>Nachtaktiv</p>"
+                            },
+                            {
+                                "spaceIdentifier": "da1bbf44-0a6c-4ab4-8853-78d271442644:180",
+                                "encodedSpace": "<p>Dämmerungsaktiv</p>"
+                            }
+                        ]
+                    },
+                    "maxPoints": 6,
+                    "isPossible": true,
+                    "name": "Bisam",
+                    "decisionRule": "",
+                    "taxon": {
+                        "taxonLatname": "Ondatra zibethicus",
+                        "taxonAuthor": "Goldman, 1932",
+                        "taxonNuid": "00100800a00p00n00202o001",
+                        "taxonSource": "taxonomy.sources.col",
+                        "nameUuid": "079acea0-8a1c-4aa3-b196-db122ea6c073"
+                    },
+                    "slug": "52-bisam"
+                },
+                {
+                    "uuid": "ddb74d24-d53c-4c25-81ff-80cf6207c749",
+                    "nodeType": "result",
+                    "imageUrl": {
+                        "1x": "/localcosmos/user_content/content_images/image-107-250.webp",
+                        "2x": "/localcosmos/user_content/content_images/image-107-500.webp",
+                        "4x": "/localcosmos/user_content/content_images/image-107-1000.webp"
+                    },
+                    "space": {
+                        "96bdc492-b512-4cce-8574-5fd83e06ebfb": [
+                            {
+                                "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:137",
+                                "encodedSpace": [
+                                    0,
+                                    0,
+                                    0,
+                                    1
+                                ]
+                            },
+                            {
+                                "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:142",
+                                "encodedSpace": [
+                                    97,
+                                    54,
+                                    33,
+                                    1
+                                ]
+                            },
+                            {
+                                "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:150",
+                                "encodedSpace": [
+                                    248,
+                                    152,
+                                    7,
+                                    1
+                                ]
+                            }
+                        ],
+                        "7475b5f8-cfcd-4d1b-8404-3a17941eb91b": [
+                            {
+                                "spaceIdentifier": "7475b5f8-cfcd-4d1b-8404-3a17941eb91b:155",
+                                "encodedSpace": "<p>Schwimmhäute</p>"
+                            }
+                        ],
+                        "ba7ab486-7428-4292-9755-593a5492d149": [
+                            {
+                                "spaceIdentifier": "ba7ab486-7428-4292-9755-593a5492d149:157",
+                                "encodedSpace": "<p>nackt</p>"
+                            },
+                            {
+                                "spaceIdentifier": "ba7ab486-7428-4292-9755-593a5492d149:160",
+                                "encodedSpace": "<p>runder Querschnitt</p>"
+                            }
+                        ],
+                        "d6a15597-ca2f-4fd4-b976-76f449b16be6": [
+                            {
+                                "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:143",
+                                "encodedSpace": [
+                                    0,
+                                    0,
+                                    0,
+                                    1
+                                ]
+                            },
+                            {
+                                "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:147",
+                                "encodedSpace": [
+                                    104,
+                                    58,
+                                    36,
+                                    1
+                                ]
+                            },
+                            {
+                                "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:148",
+                                "encodedSpace": [
+                                    248,
+                                    152,
+                                    7,
+                                    1
+                                ]
+                            }
+                        ],
+                        "75087d20-7447-4ff5-a10b-5495e88074be": [
+                            {
+                                "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:63.0",
+                                "encodedSpace": 63.0
+                            }
+                        ],
+                        "7f496af4-8e98-4bb6-8f3b-09496c3a0efd": [
+                            {
+                                "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:45.0",
+                                "encodedSpace": 45.0
+                            }
+                        ],
+                        "da1bbf44-0a6c-4ab4-8853-78d271442644": [
+                            {
+                                "spaceIdentifier": "da1bbf44-0a6c-4ab4-8853-78d271442644:180",
+                                "encodedSpace": "<p>Dämmerungsaktiv</p>"
+                            }
+                        ]
+                    },
+                    "maxPoints": 7,
+                    "isPossible": true,
+                    "name": "Nutria",
+                    "decisionRule": "",
+                    "taxon": {
+                        "taxonLatname": "Myocastor coypus",
+                        "taxonAuthor": "(Molina, 1782)",
+                        "taxonNuid": "00100800a00p00o001001",
+                        "taxonSource": "taxonomy.sources.col",
+                        "nameUuid": "2e2a483e-7497-4553-bed2-0c4227ff8a9b"
+                    },
+                    "slug": "53-nutria"
+                },
+                {
+                    "uuid": "75b3edb6-d5ae-4250-9dd8-db09b7602016",
+                    "nodeType": "result",
+                    "imageUrl": {
+                        "1x": "/localcosmos/user_content/content_images/image-108-250.webp",
+                        "2x": "/localcosmos/user_content/content_images/image-108-500.webp",
+                        "4x": "/localcosmos/user_content/content_images/image-108-1000.webp"
+                    },
+                    "space": {
+                        "96bdc492-b512-4cce-8574-5fd83e06ebfb": [
+                            {
+                                "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:137",
+                                "encodedSpace": [
+                                    0,
+                                    0,
+                                    0,
+                                    1
+                                ]
+                            },
+                            {
+                                "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:168",
+                                "encodedSpace": [
+                                    174,
+                                    87,
+                                    0,
+                                    1
+                                ]
+                            }
+                        ],
+                        "7475b5f8-cfcd-4d1b-8404-3a17941eb91b": [
+                            {
+                                "spaceIdentifier": "7475b5f8-cfcd-4d1b-8404-3a17941eb91b:153",
+                                "encodedSpace": "<p>Damm</p>"
+                            },
+                            {
+                                "spaceIdentifier": "7475b5f8-cfcd-4d1b-8404-3a17941eb91b:154",
+                                "encodedSpace": "<p>Bieberburg</p>"
+                            },
+                            {
+                                "spaceIdentifier": "7475b5f8-cfcd-4d1b-8404-3a17941eb91b:155",
+                                "encodedSpace": "<p>Schwimmhäute</p>"
+                            }
+                        ],
+                        "ba7ab486-7428-4292-9755-593a5492d149": [
+                            {
+                                "spaceIdentifier": "ba7ab486-7428-4292-9755-593a5492d149:159",
+                                "encodedSpace": "<p>abgeplattet</p>"
+                            }
+                        ],
+                        "d6a15597-ca2f-4fd4-b976-76f449b16be6": [
+                            {
+                                "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:143",
+                                "encodedSpace": [
+                                    0,
+                                    0,
+                                    0,
+                                    1
+                                ]
+                            },
+                            {
+                                "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:169",
+                                "encodedSpace": [
+                                    174,
+                                    87,
+                                    0,
+                                    1
+                                ]
+                            }
+                        ],
+                        "75087d20-7447-4ff5-a10b-5495e88074be": [
+                            {
+                                "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:95.0",
+                                "encodedSpace": 95.0
+                            }
+                        ],
+                        "7f496af4-8e98-4bb6-8f3b-09496c3a0efd": [
+                            {
+                                "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:38.0",
+                                "encodedSpace": 38.0
+                            }
+                        ],
+                        "da1bbf44-0a6c-4ab4-8853-78d271442644": [
+                            {
+                                "spaceIdentifier": "da1bbf44-0a6c-4ab4-8853-78d271442644:179",
+                                "encodedSpace": "<p>Nachtaktiv</p>"
+                            }
+                        ]
+                    },
+                    "maxPoints": 7,
+                    "isPossible": true,
+                    "name": "Biber",
+                    "decisionRule": "",
+                    "taxon": {
+                        "taxonLatname": "Castor fiber",
+                        "taxonAuthor": "Linnaeus, 1758",
+                        "taxonNuid": "00100800a00p006001002",
+                        "taxonSource": "taxonomy.sources.col",
+                        "nameUuid": "049f3704-72f7-4de5-8a11-0a0d032bf4c0"
+                    },
+                    "slug": "54-biber"
+                },
+                {
+                    "uuid": "1f71ff78-1ace-4ab8-a1d0-ebd04b9dcc39",
+                    "nodeType": "result",
+                    "imageUrl": {
+                        "1x": "/localcosmos/user_content/content_images/image-109-250.webp",
+                        "2x": "/localcosmos/user_content/content_images/image-109-500.webp",
+                        "4x": "/localcosmos/user_content/content_images/image-109-1000.webp"
+                    },
+                    "space": {
+                        "96bdc492-b512-4cce-8574-5fd83e06ebfb": [
+                            {
+                                "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:142",
+                                "encodedSpace": [
+                                    97,
+                                    54,
+                                    33,
+                                    1
+                                ]
+                            }
+                        ],
+                        "7475b5f8-cfcd-4d1b-8404-3a17941eb91b": [
+                            {
+                                "spaceIdentifier": "7475b5f8-cfcd-4d1b-8404-3a17941eb91b:155",
+                                "encodedSpace": "<p>Schwimmhäute</p>"
+                            },
+                            {
+                                "spaceIdentifier": "7475b5f8-cfcd-4d1b-8404-3a17941eb91b:176",
+                                "encodedSpace": "<p>weiße bis hellgraue Kehle</p>"
+                            }
+                        ],
+                        "ba7ab486-7428-4292-9755-593a5492d149": [
+                            {
+                                "spaceIdentifier": "ba7ab486-7428-4292-9755-593a5492d149:160",
+                                "encodedSpace": "<p>runder Querschnitt</p>"
+                            },
+                            {
+                                "spaceIdentifier": "ba7ab486-7428-4292-9755-593a5492d149:161",
+                                "encodedSpace": "<p>behaart</p>"
+                            },
+                            {
+                                "spaceIdentifier": "ba7ab486-7428-4292-9755-593a5492d149:162",
+                                "encodedSpace": "<p>verjüngend</p>"
+                            }
+                        ],
+                        "d6a15597-ca2f-4fd4-b976-76f449b16be6": [
+                            {
+                                "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:170",
+                                "encodedSpace": [
+                                    255,
+                                    177,
+                                    100,
+                                    1
+                                ]
+                            }
+                        ],
+                        "75087d20-7447-4ff5-a10b-5495e88074be": [
+                            {
+                                "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:100.0",
+                                "encodedSpace": 100.0
+                            }
+                        ],
+                        "7f496af4-8e98-4bb6-8f3b-09496c3a0efd": [
+                            {
+                                "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:55.0",
+                                "encodedSpace": 55.0
+                            }
+                        ],
+                        "da1bbf44-0a6c-4ab4-8853-78d271442644": [
+                            {
+                                "spaceIdentifier": "da1bbf44-0a6c-4ab4-8853-78d271442644:179",
+                                "encodedSpace": "<p>Nachtaktiv</p>"
+                            },
+                            {
+                                "spaceIdentifier": "da1bbf44-0a6c-4ab4-8853-78d271442644:180",
+                                "encodedSpace": "<p>Dämmerungsaktiv</p>"
+                            }
+                        ]
+                    },
+                    "maxPoints": 7,
+                    "isPossible": true,
+                    "name": "Fischotter",
+                    "decisionRule": "",
+                    "taxon": {
+                        "taxonLatname": "Lutra lutra",
+                        "taxonAuthor": "(Linnaeus, 1758)",
+                        "taxonNuid": "00100800a00300800a001",
+                        "taxonSource": "taxonomy.sources.col",
+                        "nameUuid": "3f3b7d29-6c7a-4b96-805f-eceaf6969d83"
+                    },
+                    "slug": "55-fischotter"
+                },
+                {
+                    "uuid": "212acac6-31b7-466a-8a0a-ca088a79e8c3",
+                    "nodeType": "result",
+                    "imageUrl": {
+                        "1x": "/localcosmos/user_content/content_images/image-110-250.webp",
+                        "2x": "/localcosmos/user_content/content_images/image-110-500.webp",
+                        "4x": "/localcosmos/user_content/content_images/image-110-1000.webp"
+                    },
+                    "space": {
+                        "96bdc492-b512-4cce-8574-5fd83e06ebfb": [
+                            {
+                                "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:137",
+                                "encodedSpace": [
+                                    0,
+                                    0,
+                                    0,
+                                    1
+                                ]
+                            },
+                            {
+                                "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:172",
+                                "encodedSpace": [
+                                    210,
+                                    210,
+                                    210,
+                                    1
+                                ]
+                            },
+                            {
+                                "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:168",
+                                "encodedSpace": [
+                                    174,
+                                    87,
+                                    0,
+                                    1
+                                ]
+                            }
+                        ],
+                        "ba7ab486-7428-4292-9755-593a5492d149": [
+                            {
+                                "spaceIdentifier": "ba7ab486-7428-4292-9755-593a5492d149:160",
+                                "encodedSpace": "<p>runder Querschnitt</p>"
+                            },
+                            {
+                                "spaceIdentifier": "ba7ab486-7428-4292-9755-593a5492d149:161",
+                                "encodedSpace": "<p>behaart</p>"
+                            }
+                        ],
+                        "d6a15597-ca2f-4fd4-b976-76f449b16be6": [
+                            {
+                                "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:147",
+                                "encodedSpace": [
+                                    104,
+                                    58,
+                                    36,
+                                    1
+                                ]
+                            },
+                            {
+                                "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:169",
+                                "encodedSpace": [
+                                    174,
+                                    87,
+                                    0,
+                                    1
+                                ]
+                            },
+                            {
+                                "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:170",
+                                "encodedSpace": [
+                                    255,
+                                    177,
+                                    100,
+                                    1
+                                ]
+                            }
+                        ],
+                        "75087d20-7447-4ff5-a10b-5495e88074be": [
+                            {
+                                "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:20.0",
+                                "encodedSpace": 20.0
+                            }
+                        ],
+                        "7f496af4-8e98-4bb6-8f3b-09496c3a0efd": [
+                            {
+                                "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:16.0",
+                                "encodedSpace": 16.0
+                            }
+                        ],
+                        "da1bbf44-0a6c-4ab4-8853-78d271442644": [
+                            {
+                                "spaceIdentifier": "da1bbf44-0a6c-4ab4-8853-78d271442644:179",
+                                "encodedSpace": "<p>Nachtaktiv</p>"
+                            }
+                        ]
+                    },
+                    "maxPoints": 6,
+                    "isPossible": true,
+                    "name": "Wasserratte/Schermaus",
+                    "decisionRule": "",
+                    "taxon": {
+                        "taxonLatname": "Arvicola amphibius",
+                        "taxonAuthor": "(Linnaeus, 1758)",
+                        "taxonNuid": "00100800a00p00n00200d001",
+                        "taxonSource": "taxonomy.sources.col",
+                        "nameUuid": "d1df5c38-a165-4843-90c5-fd76f35c8a92"
+                    },
+                    "slug": "56-wasserratteschermaus"
+                },
+                {
+                    "uuid": "254e0ec9-67c0-4ea8-afa9-b88dfe71ab4f",
+                    "nodeType": "result",
+                    "imageUrl": {
+                        "1x": "/localcosmos/user_content/content_images/image-111-250.webp",
+                        "2x": "/localcosmos/user_content/content_images/image-111-500.webp",
+                        "4x": "/localcosmos/user_content/content_images/image-111-1000.webp"
+                    },
+                    "space": {
+                        "96bdc492-b512-4cce-8574-5fd83e06ebfb": [
+                            {
+                                "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:174",
+                                "encodedSpace": [
+                                    154,
+                                    154,
+                                    154,
+                                    1
+                                ]
+                            },
+                            {
+                                "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:177",
+                                "encodedSpace": [
+                                    81,
+                                    57,
+                                    47,
+                                    1
+                                ]
+                            },
+                            {
+                                "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:168",
+                                "encodedSpace": [
+                                    174,
+                                    87,
+                                    0,
+                                    1
+                                ]
+                            }
+                        ],
+                        "ba7ab486-7428-4292-9755-593a5492d149": [
+                            {
+                                "spaceIdentifier": "ba7ab486-7428-4292-9755-593a5492d149:157",
+                                "encodedSpace": "<p>nackt</p>"
+                            },
+                            {
+                                "spaceIdentifier": "ba7ab486-7428-4292-9755-593a5492d149:160",
+                                "encodedSpace": "<p>runder Querschnitt</p>"
+                            }
+                        ],
+                        "d6a15597-ca2f-4fd4-b976-76f449b16be6": [
+                            {
+                                "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:169",
+                                "encodedSpace": [
+                                    174,
+                                    87,
+                                    0,
+                                    1
+                                ]
+                            }
+                        ],
+                        "75087d20-7447-4ff5-a10b-5495e88074be": [
+                            {
+                                "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:27.0",
+                                "encodedSpace": 27.0
+                            }
+                        ],
+                        "7f496af4-8e98-4bb6-8f3b-09496c3a0efd": [
+                            {
+                                "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:23.0",
+                                "encodedSpace": 23.0
+                            }
+                        ],
+                        "da1bbf44-0a6c-4ab4-8853-78d271442644": [
+                            {
+                                "spaceIdentifier": "da1bbf44-0a6c-4ab4-8853-78d271442644:179",
+                                "encodedSpace": "<p>Nachtaktiv</p>"
+                            },
+                            {
+                                "spaceIdentifier": "da1bbf44-0a6c-4ab4-8853-78d271442644:180",
+                                "encodedSpace": "<p>Dämmerungsaktiv</p>"
+                            }
+                        ]
+                    },
+                    "maxPoints": 6,
+                    "isPossible": true,
+                    "name": "Wanderratte",
+                    "decisionRule": "",
+                    "taxon": {
+                        "taxonLatname": "Rattus norvegicus",
+                        "taxonAuthor": "(Berkenhout, 1769)",
+                        "taxonNuid": "00100800a00p00n00303l013",
+                        "taxonSource": "taxonomy.sources.col",
+                        "nameUuid": "045d2cfc-e6ab-4ef0-9325-a3e8a58c8c4b"
+                    },
+                    "slug": "57-wanderratte"
+                },
+                {
+                    "uuid": "cb09a1fa-a763-401e-95be-96818f4b2b83",
+                    "nodeType": "result",
+                    "imageUrl": {
+                        "1x": "/localcosmos/user_content/content_images/image-112-250.webp",
+                        "2x": "/localcosmos/user_content/content_images/image-112-500.webp",
+                        "4x": "/localcosmos/user_content/content_images/image-112-1000.webp"
+                    },
+                    "space": {
+                        "96bdc492-b512-4cce-8574-5fd83e06ebfb": [
+                            {
+                                "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:177",
+                                "encodedSpace": [
+                                    81,
+                                    57,
+                                    47,
+                                    1
+                                ]
+                            },
+                            {
+                                "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:178",
+                                "encodedSpace": [
+                                    255,
+                                    0,
+                                    0,
+                                    1
+                                ]
+                            }
+                        ],
+                        "7475b5f8-cfcd-4d1b-8404-3a17941eb91b": [
+                            {
+                                "spaceIdentifier": "7475b5f8-cfcd-4d1b-8404-3a17941eb91b:152",
+                                "encodedSpace": "<p>Flügel</p>"
+                            }
+                        ],
+                        "d6a15597-ca2f-4fd4-b976-76f449b16be6": [
+                            {
+                                "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:149",
+                                "encodedSpace": [
+                                    230,
+                                    230,
+                                    230,
+                                    1
+                                ]
+                            }
+                        ],
+                        "75087d20-7447-4ff5-a10b-5495e88074be": [
+                            {
+                                "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:5.0",
+                                "encodedSpace": 5.0
+                            }
+                        ],
+                        "7f496af4-8e98-4bb6-8f3b-09496c3a0efd": [
+                            {
+                                "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:4.0",
+                                "encodedSpace": 4.0
+                            }
+                        ],
+                        "da1bbf44-0a6c-4ab4-8853-78d271442644": [
+                            {
+                                "spaceIdentifier": "da1bbf44-0a6c-4ab4-8853-78d271442644:179",
+                                "encodedSpace": "<p>Nachtaktiv</p>"
+                            },
+                            {
+                                "spaceIdentifier": "da1bbf44-0a6c-4ab4-8853-78d271442644:180",
+                                "encodedSpace": "<p>Dämmerungsaktiv</p>"
+                            }
+                        ]
+                    },
+                    "maxPoints": 6,
+                    "isPossible": true,
+                    "name": "Wasserfledermaus",
+                    "decisionRule": "",
+                    "taxon": {
+                        "taxonLatname": "Myotis daubentonii",
+                        "taxonAuthor": "(Kuhl, 1817)",
+                        "taxonNuid": "00100800a00500500500q00v",
+                        "taxonSource": "taxonomy.sources.col",
+                        "nameUuid": "c613be5b-f493-40dd-b6cb-df4efb642bd1"
+                    },
+                    "slug": "58-wasserfledermaus"
+                }
+            ],
+            "matrixFilters": {
+                "96bdc492-b512-4cce-8574-5fd83e06ebfb": {
+                    "uuid": "96bdc492-b512-4cce-8574-5fd83e06ebfb",
+                    "name": "Fellfarbe Rücken",
+                    "type": "ColorFilter",
+                    "position": 1,
+                    "description": null,
+                    "weight": 1,
+                    "restrictions": {},
+                    "isRestricted": false,
+                    "allowMultipleValues": true,
+                    "identificationMeans": [],
+                    "space": [
+                        {
+                            "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:137",
+                            "encodedSpace": [
+                                0,
+                                0,
+                                0,
+                                1
+                            ],
+                            "html": "rgba(0,0,0,1)",
+                            "gradient": false,
+                            "description": "schwarz"
+                        },
+                        {
+                            "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:174",
+                            "encodedSpace": [
+                                154,
+                                154,
+                                154,
+                                1
+                            ],
+                            "html": "rgba(154,154,154,1)",
+                            "gradient": false,
+                            "description": "dunkelgrau"
+                        },
+                        {
+                            "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:172",
+                            "encodedSpace": [
+                                210,
+                                210,
+                                210,
+                                1
+                            ],
+                            "html": "rgba(210,210,210,1)",
+                            "gradient": false,
+                            "description": "grau"
+                        },
+                        {
+                            "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:141",
+                            "encodedSpace": [
+                                240,
+                                240,
+                                240,
+                                1
+                            ],
+                            "html": "rgba(240,240,240,1)",
+                            "gradient": false,
+                            "description": "hellgrau"
+                        },
+                        {
+                            "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:177",
+                            "encodedSpace": [
+                                81,
+                                57,
+                                47,
+                                1
+                            ],
+                            "html": "rgba(81,57,47,1)",
+                            "gradient": false,
+                            "description": "graubraun"
+                        },
+                        {
+                            "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:138",
+                            "encodedSpace": [
+                                99,
+                                7,
+                                7,
+                                1
+                            ],
+                            "html": "rgba(99,7,7,1)",
+                            "gradient": false,
+                            "description": "kastanienbraun"
+                        },
+                        {
+                            "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:142",
+                            "encodedSpace": [
+                                97,
+                                54,
+                                33,
+                                1
+                            ],
+                            "html": "rgba(97,54,33,1)",
+                            "gradient": false,
+                            "description": "dunkelbraun"
+                        },
+                        {
+                            "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:168",
+                            "encodedSpace": [
+                                174,
+                                87,
+                                0,
+                                1
+                            ],
+                            "html": "rgba(174,87,0,1)",
+                            "gradient": false,
+                            "description": "braun"
+                        },
+                        {
+                            "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:171",
+                            "encodedSpace": [
+                                255,
+                                177,
+                                100,
+                                1
+                            ],
+                            "html": "rgba(255,177,100,1)",
+                            "gradient": false,
+                            "description": "hellbraun"
+                        },
+                        {
+                            "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:150",
+                            "encodedSpace": [
+                                248,
+                                152,
+                                7,
+                                1
+                            ],
+                            "html": "rgba(248,152,7,1)",
+                            "gradient": false,
+                            "description": "gelbbraun"
+                        },
+                        {
+                            "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:178",
+                            "encodedSpace": [
+                                255,
+                                0,
+                                0,
+                                1
+                            ],
+                            "html": "rgba(255,0,0,1)",
+                            "gradient": false,
+                            "description": "rötlich"
+                        }
+                    ],
+                    "definition": {}
+                },
+                "d6a15597-ca2f-4fd4-b976-76f449b16be6": {
+                    "uuid": "d6a15597-ca2f-4fd4-b976-76f449b16be6",
+                    "name": "Fellfarbe Bauchseite",
+                    "type": "ColorFilter",
+                    "position": 2,
+                    "description": null,
+                    "weight": 1,
+                    "restrictions": {},
+                    "isRestricted": false,
+                    "allowMultipleValues": true,
+                    "identificationMeans": [],
+                    "space": [
+                        {
+                            "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:143",
+                            "encodedSpace": [
+                                0,
+                                0,
+                                0,
+                                1
+                            ],
+                            "html": "rgba(0,0,0,1)",
+                            "gradient": false,
+                            "description": "schwarz"
+                        },
+                        {
+                            "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:175",
+                            "encodedSpace": [
+                                154,
+                                154,
+                                154,
+                                1
+                            ],
+                            "html": "rgba(154,154,154,1)",
+                            "gradient": false,
+                            "description": "dunkelgrau"
+                        },
+                        {
+                            "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:173",
+                            "encodedSpace": [
+                                210,
+                                210,
+                                210,
+                                1
+                            ],
+                            "html": "rgba(210,210,210,1)",
+                            "gradient": false,
+                            "description": "grau"
+                        },
+                        {
+                            "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:149",
+                            "encodedSpace": [
+                                230,
+                                230,
+                                230,
+                                1
+                            ],
+                            "html": "rgba(230,230,230,1)",
+                            "gradient": false,
+                            "description": "hellgrau"
+                        },
+                        {
+                            "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:147",
+                            "encodedSpace": [
+                                104,
+                                58,
+                                36,
+                                1
+                            ],
+                            "html": "rgba(104,58,36,1)",
+                            "gradient": false,
+                            "description": "dunkelbraun"
+                        },
+                        {
+                            "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:169",
+                            "encodedSpace": [
+                                174,
+                                87,
+                                0,
+                                1
+                            ],
+                            "html": "rgba(174,87,0,1)",
+                            "gradient": false,
+                            "description": "braun"
+                        },
+                        {
+                            "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:170",
+                            "encodedSpace": [
+                                255,
+                                177,
+                                100,
+                                1
+                            ],
+                            "html": "rgba(255,177,100,1)",
+                            "gradient": false,
+                            "description": "hellbraun"
+                        },
+                        {
+                            "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:148",
+                            "encodedSpace": [
+                                248,
+                                152,
+                                7,
+                                1
+                            ],
+                            "html": "rgba(248,152,7,1)",
+                            "gradient": false,
+                            "description": "gelbbraun"
+                        },
+                        {
+                            "spaceIdentifier": "d6a15597-ca2f-4fd4-b976-76f449b16be6:144",
+                            "encodedSpace": [
+                                255,
+                                255,
+                                255,
+                                1
+                            ],
+                            "html": "rgba(255,255,255,1)",
+                            "gradient": false,
+                            "description": "weiß"
+                        }
+                    ],
+                    "definition": {}
+                },
+                "ba7ab486-7428-4292-9755-593a5492d149": {
+                    "uuid": "ba7ab486-7428-4292-9755-593a5492d149",
+                    "name": "Schwanz",
+                    "type": "DescriptiveTextAndImagesFilter",
+                    "position": 3,
+                    "description": null,
+                    "weight": 1,
+                    "restrictions": {},
+                    "isRestricted": false,
+                    "allowMultipleValues": false,
+                    "identificationMeans": [],
+                    "space": [
+                        {
+                            "spaceIdentifier": "ba7ab486-7428-4292-9755-593a5492d149:157",
+                            "encodedSpace": "<p>nackt</p>",
+                            "imageUrl": {
+                                "1x": "/localcosmos/user_content/content_images/image-96-250.webp",
+                                "2x": "/localcosmos/user_content/content_images/image-96-500.webp",
+                                "4x": "/localcosmos/user_content/content_images/image-96-1000.webp"
+                            },
+                            "secondaryImageUrl": null
+                        },
+                        {
+                            "spaceIdentifier": "ba7ab486-7428-4292-9755-593a5492d149:158",
+                            "encodedSpace": "<p>seitlich gedrückter Querschnitt</p>",
+                            "imageUrl": {
+                                "1x": "/localcosmos/user_content/content_images/image-97-250.webp",
+                                "2x": "/localcosmos/user_content/content_images/image-97-500.webp",
+                                "4x": "/localcosmos/user_content/content_images/image-97-1000.webp"
+                            },
+                            "secondaryImageUrl": null
+                        },
+                        {
+                            "spaceIdentifier": "ba7ab486-7428-4292-9755-593a5492d149:159",
+                            "encodedSpace": "<p>abgeplattet</p>",
+                            "imageUrl": {
+                                "1x": "/localcosmos/user_content/content_images/image-98-250.webp",
+                                "2x": "/localcosmos/user_content/content_images/image-98-500.webp",
+                                "4x": "/localcosmos/user_content/content_images/image-98-1000.webp"
+                            },
+                            "secondaryImageUrl": null
+                        },
+                        {
+                            "spaceIdentifier": "ba7ab486-7428-4292-9755-593a5492d149:160",
+                            "encodedSpace": "<p>runder Querschnitt</p>",
+                            "imageUrl": {
+                                "1x": "/localcosmos/user_content/content_images/image-99-250.webp",
+                                "2x": "/localcosmos/user_content/content_images/image-99-500.webp",
+                                "4x": "/localcosmos/user_content/content_images/image-99-1000.webp"
+                            },
+                            "secondaryImageUrl": null
+                        },
+                        {
+                            "spaceIdentifier": "ba7ab486-7428-4292-9755-593a5492d149:161",
+                            "encodedSpace": "<p>behaart</p>",
+                            "imageUrl": {
+                                "1x": "/localcosmos/user_content/content_images/image-100-250.webp",
+                                "2x": "/localcosmos/user_content/content_images/image-100-500.webp",
+                                "4x": "/localcosmos/user_content/content_images/image-100-1000.webp"
+                            },
+                            "secondaryImageUrl": null
+                        },
+                        {
+                            "spaceIdentifier": "ba7ab486-7428-4292-9755-593a5492d149:162",
+                            "encodedSpace": "<p>verjüngend</p>",
+                            "imageUrl": {
+                                "1x": "/localcosmos/user_content/content_images/image-101-250.webp",
+                                "2x": "/localcosmos/user_content/content_images/image-101-500.webp",
+                                "4x": "/localcosmos/user_content/content_images/image-101-1000.webp"
+                            },
+                            "secondaryImageUrl": null
+                        }
+                    ],
+                    "definition": {}
+                },
+                "7475b5f8-cfcd-4d1b-8404-3a17941eb91b": {
+                    "uuid": "7475b5f8-cfcd-4d1b-8404-3a17941eb91b",
+                    "name": "besondere Merkmale",
+                    "type": "DescriptiveTextAndImagesFilter",
+                    "position": 4,
+                    "description": null,
+                    "weight": 1,
+                    "restrictions": {},
+                    "isRestricted": false,
+                    "allowMultipleValues": true,
+                    "identificationMeans": [],
+                    "space": [
+                        {
+                            "spaceIdentifier": "7475b5f8-cfcd-4d1b-8404-3a17941eb91b:151",
+                            "encodedSpace": "<p>Fleck hinter dem Auge</p>",
+                            "imageUrl": {
+                                "1x": "/localcosmos/user_content/content_images/image-90-250.webp",
+                                "2x": "/localcosmos/user_content/content_images/image-90-500.webp",
+                                "4x": "/localcosmos/user_content/content_images/image-90-1000.webp"
+                            },
+                            "secondaryImageUrl": null
+                        },
+                        {
+                            "spaceIdentifier": "7475b5f8-cfcd-4d1b-8404-3a17941eb91b:152",
+                            "encodedSpace": "<p>Flügel</p>",
+                            "imageUrl": {
+                                "1x": "/localcosmos/user_content/content_images/image-91-250.webp",
+                                "2x": "/localcosmos/user_content/content_images/image-91-500.webp",
+                                "4x": "/localcosmos/user_content/content_images/image-91-1000.webp"
+                            },
+                            "secondaryImageUrl": null
+                        },
+                        {
+                            "spaceIdentifier": "7475b5f8-cfcd-4d1b-8404-3a17941eb91b:153",
+                            "encodedSpace": "<p>Damm</p>",
+                            "imageUrl": {
+                                "1x": "/localcosmos/user_content/content_images/image-92-250.webp",
+                                "2x": "/localcosmos/user_content/content_images/image-92-500.webp",
+                                "4x": "/localcosmos/user_content/content_images/image-92-1000.webp"
+                            },
+                            "secondaryImageUrl": null
+                        },
+                        {
+                            "spaceIdentifier": "7475b5f8-cfcd-4d1b-8404-3a17941eb91b:154",
+                            "encodedSpace": "<p>Bieberburg</p>",
+                            "imageUrl": {
+                                "1x": "/localcosmos/user_content/content_images/image-93-250.webp",
+                                "2x": "/localcosmos/user_content/content_images/image-93-500.webp",
+                                "4x": "/localcosmos/user_content/content_images/image-93-1000.webp"
+                            },
+                            "secondaryImageUrl": null
+                        },
+                        {
+                            "spaceIdentifier": "7475b5f8-cfcd-4d1b-8404-3a17941eb91b:155",
+                            "encodedSpace": "<p>Schwimmhäute</p>",
+                            "imageUrl": {
+                                "1x": "/localcosmos/user_content/content_images/image-94-250.webp",
+                                "2x": "/localcosmos/user_content/content_images/image-94-500.webp",
+                                "4x": "/localcosmos/user_content/content_images/image-94-1000.webp"
+                            },
+                            "secondaryImageUrl": null
+                        },
+                        {
+                            "spaceIdentifier": "7475b5f8-cfcd-4d1b-8404-3a17941eb91b:156",
+                            "encodedSpace": "<p>Schwimmborsten</p>",
+                            "imageUrl": {
+                                "1x": "/localcosmos/user_content/content_images/image-95-250.webp",
+                                "2x": "/localcosmos/user_content/content_images/image-95-500.webp",
+                                "4x": "/localcosmos/user_content/content_images/image-95-1000.webp"
+                            },
+                            "secondaryImageUrl": null
+                        },
+                        {
+                            "spaceIdentifier": "7475b5f8-cfcd-4d1b-8404-3a17941eb91b:176",
+                            "encodedSpace": "<p>weiße bis hellgraue Kehle</p>",
+                            "imageUrl": {
+                                "1x": "/localcosmos/user_content/content_images/image-102-250.webp",
+                                "2x": "/localcosmos/user_content/content_images/image-102-500.webp",
+                                "4x": "/localcosmos/user_content/content_images/image-102-1000.webp"
+                            },
+                            "secondaryImageUrl": null
+                        }
+                    ],
+                    "definition": {}
+                },
+                "75087d20-7447-4ff5-a10b-5495e88074be": {
+                    "uuid": "75087d20-7447-4ff5-a10b-5495e88074be",
+                    "name": "maximale Körpergröße",
+                    "type": "NumberFilter",
+                    "position": 5,
+                    "description": null,
+                    "weight": 1,
+                    "restrictions": {},
+                    "isRestricted": false,
+                    "allowMultipleValues": false,
+                    "identificationMeans": [],
+                    "space": [
+                        {
+                            "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:5.0",
+                            "encodedSpace": 5.0
+                        },
+                        {
+                            "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:10.0",
+                            "encodedSpace": 10.0
+                        },
+                        {
+                            "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:20.0",
+                            "encodedSpace": 20.0
+                        },
+                        {
+                            "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:27.0",
+                            "encodedSpace": 27.0
+                        },
+                        {
+                            "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:40.0",
+                            "encodedSpace": 40.0
+                        },
+                        {
+                            "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:63.0",
+                            "encodedSpace": 63.0
+                        },
+                        {
+                            "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:95.0",
+                            "encodedSpace": 95.0
+                        },
+                        {
+                            "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:100.0",
+                            "encodedSpace": 100.0
+                        }
+                    ],
+                    "definition": {
+                        "unit": "cm",
+                        "unit_verbose": "Zentimeter"
+                    }
+                },
+                "7f496af4-8e98-4bb6-8f3b-09496c3a0efd": {
+                    "uuid": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd",
+                    "name": "maximale Schwanzlänge",
+                    "type": "NumberFilter",
+                    "position": 6,
+                    "description": null,
+                    "weight": 1,
+                    "restrictions": {},
+                    "isRestricted": false,
+                    "allowMultipleValues": false,
+                    "identificationMeans": [],
+                    "space": [
+                        {
+                            "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:4.0",
+                            "encodedSpace": 4.0
+                        },
+                        {
+                            "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:8.0",
+                            "encodedSpace": 8.0
+                        },
+                        {
+                            "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:16.0",
+                            "encodedSpace": 16.0
+                        },
+                        {
+                            "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:23.0",
+                            "encodedSpace": 23.0
+                        },
+                        {
+                            "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:26.0",
+                            "encodedSpace": 26.0
+                        },
+                        {
+                            "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:38.0",
+                            "encodedSpace": 38.0
+                        },
+                        {
+                            "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:45.0",
+                            "encodedSpace": 45.0
+                        },
+                        {
+                            "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:55.0",
+                            "encodedSpace": 55.0
+                        }
+                    ],
+                    "definition": {
+                        "unit": "cm",
+                        "unit_verbose": "Zentimeter"
+                    }
+                },
+                "da1bbf44-0a6c-4ab4-8853-78d271442644": {
+                    "uuid": "da1bbf44-0a6c-4ab4-8853-78d271442644",
+                    "name": "Aktivität",
+                    "type": "TextOnlyFilter",
+                    "position": 7,
+                    "description": null,
+                    "weight": 1,
+                    "restrictions": {},
+                    "isRestricted": false,
+                    "allowMultipleValues": true,
+                    "identificationMeans": [],
+                    "space": [
+                        {
+                            "spaceIdentifier": "da1bbf44-0a6c-4ab4-8853-78d271442644:179",
+                            "encodedSpace": "<p>Nachtaktiv</p>"
+                        },
+                        {
+                            "spaceIdentifier": "da1bbf44-0a6c-4ab4-8853-78d271442644:180",
+                            "encodedSpace": "<p>Dämmerungsaktiv</p>"
+                        },
+                        {
+                            "spaceIdentifier": "da1bbf44-0a6c-4ab4-8853-78d271442644:181",
+                            "encodedSpace": "<p>Tagaktiv</p>"
+                        }
+                    ],
+                    "definition": {}
+                }
+            },
+            "identificationMode": "strict",
+            "slug": "45-wassersauger",
+            "overviewImage": null,
+            "description": null,
+            "childrenCount": 8
+        }
+    },
+    "crosslinks": {},
+    "startNodeUuid": "8ce822aa-6472-4f8d-9814-cbe052b5d4d2",
+    "slugs": {
+        "45-wassersauger": "8ce822aa-6472-4f8d-9814-cbe052b5d4d2",
+        "46-wasserspitzmaus": "76838f4f-9813-41ee-b133-83c0bdbe3bec",
+        "52-bisam": "4c92b1d6-b13c-4a73-b081-3708033865e4",
+        "53-nutria": "ddb74d24-d53c-4c25-81ff-80cf6207c749",
+        "54-biber": "75b3edb6-d5ae-4250-9dd8-db09b7602016",
+        "55-fischotter": "1f71ff78-1ace-4ab8-a1d0-ebd04b9dcc39",
+        "56-wasserratteschermaus": "212acac6-31b7-466a-8a0a-ca088a79e8c3",
+        "57-wanderratte": "254e0ec9-67c0-4ea8-afa9-b88dfe71ab4f",
+        "58-wasserfledermaus": "cb09a1fa-a763-401e-95be-96818f4b2b83"
+    },
+    "imageUrl": {
+        "1x": "/localcosmos/user_content/content_images/image-1381-250.webp",
+        "2x": "/localcosmos/user_content/content_images/image-1381-500.webp",
+        "4x": "/localcosmos/user_content/content_images/image-1381-1000.webp"
+    }
+}
