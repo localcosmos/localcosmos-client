@@ -1,5 +1,5 @@
-import { TaxonReference } from './Taxon';
-import {DetailFeature} from "~/types/localcosmos/types/Features";
+import { TaxonReference } from './TaxonProfile';
+import { DetailFeature } from "../Features";
 
 export type GenericFormFieldWidgetType = 'BackboneTaxonAutocompleteWidget' | 'MobilePositionInput' | 'SelectDateTimeWidget' | 'CameraAndAlbumWidget' | 'CheckboxInput' | 'TextInput' | 'Textarea' | 'MobileNumberInput' | 'CheckboxSelectMultiple' | 'Select'
 export type GenericFormFieldType = 'TaxonField' | 'PointJSONField' | 'GeoJSONField' | 'DateTimeJSONField' | 'PictureField' | 'BooleanField' | 'CharField' | 'DecimalField' | 'FloatField' | 'IntegerField' | 'MultipleChoiceField' | 'ChoiceField'
