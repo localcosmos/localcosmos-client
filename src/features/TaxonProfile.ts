@@ -65,6 +65,10 @@ export type SearchableTaxonReference = TaxonReference & {
 }
 
 export function taxonToReference (taxon: Taxon): Partial<TaxonReference> {
+  if (!taxon) {
+    return {}
+  }
+
   return {
     nameUuid: taxon.nameUuid,
     taxonSource: taxon.taxonSource,

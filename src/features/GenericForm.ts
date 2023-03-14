@@ -1,7 +1,7 @@
 import { TaxonReference } from './TaxonProfile';
 import { DetailFeature } from "../Features";
 
-export type GenericFormFieldWidgetType = 'BackboneTaxonAutocompleteWidget' | 'MobilePositionInput' | 'SelectDateTimeWidget' | 'CameraAndAlbumWidget' | 'CheckboxInput' | 'TextInput' | 'Textarea' | 'MobileNumberInput' | 'CheckboxSelectMultiple' | 'Select'
+export type GenericFormFieldWidgetType = 'BackboneTaxonAutocompleteWidget' | 'MobilePositionInput' | 'SelectDateTimeWidget' | 'CameraAndAlbumWidget' | 'CheckboxInput' | 'TextInput' | 'Textarea' | 'MobileNumberInput' | 'CheckboxSelectMultiple' | 'Select' | 'PointOrAreaInput'
 export type GenericFormFieldType = 'TaxonField' | 'PointJSONField' | 'GeoJSONField' | 'DateTimeJSONField' | 'PictureField' | 'BooleanField' | 'CharField' | 'DecimalField' | 'FloatField' | 'IntegerField' | 'MultipleChoiceField' | 'ChoiceField'
 export type GenericFormFieldRole = 'taxonomic_reference' | 'geographic_reference' | 'temporal_reference' | 'regular'
 
