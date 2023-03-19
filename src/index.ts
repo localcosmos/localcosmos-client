@@ -32,6 +32,10 @@ export {
 } from './api/ObservationForm';
 
 export {
+  UserGeometry,
+} from './api/UserGeometry';
+
+export {
   PasswordReset,
   Registration,
   LocalcosmosUser,
