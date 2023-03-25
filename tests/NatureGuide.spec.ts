@@ -1,5 +1,11 @@
 import { beforeEach, describe, expect, vi, test } from 'vitest';
-import {IdentificationKey, IdentificationEvents, IdentificationModes, NatureGuide} from "../src/features/NatureGuide";
+import {
+  IdentificationKey,
+  IdentificationEvents,
+  IdentificationModes,
+  NatureGuide,
+  MatrixFilterSpace
+} from "../src/features/NatureGuide";
 import NatureGuideFixture from './fixtures/NatureGuide.json';
 
 describe('IdentificationKey', () => {
@@ -125,40 +131,59 @@ describe('IdentificationKey', () => {
     expect(key.impossibleResults).toEqual([key.children[1], key.children[4], key.children[6], key.children[7]]);
   })
 
-  test('creating a new IdentificationKey fills the filterVisibilityRestrictions', () => {
-    expect(key.filterVisibilityRestrictions).toEqual([
-      [],
-      [],
-      [],
-      [],
-      [],
-      [],
-      [],
-    ]);
-  })
+  describe('filterVisibilityRestrictions', () => {
+    test('creating a new IdentificationKey fills the filterVisibilityRestrictions', () => {
+      expect(key.filterVisibilityRestrictions).toEqual([
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [[0]],
+      ]);
+    })
 
-  // currently disabled because test dataset does not contain any restrictions
-  // describe('filterVisibilityRestrictions', () => {
-  //   test('a filter with restrictions to be invisible after creation', () => {
-  //     expect(key.visibleFilters).toEqual([1, 0, 1]);
-  //   })
-  //
-  //     test('selecting a space updates the possibleFilters', () => {
-  //       key.selectSpace(0);
-  //       expect(key.visibleFilters).toEqual([1, 1, 1]);
-  //     })
-  //
-  //     test('deselecting a space updates the possibleFilters', () => {
-  //       key.selectSpace(0);
-  //       key.deselectSpace(0);
-  //       expect(key.visibleFilters).toEqual([1, 0, 1]);
-  //     })
-  //
-  //   test('selecting a space only makes filters visible that are restricted by it', () => {
-  //     key.selectSpace(3, [3.0]);
-  //     expect(key.visibleFilters).toEqual([1, 0, 1]);
-  //   })
-  // })
+    test('a filter with restrictions to be invisible after creation', () => {
+      expect(key.visibleFilters).toEqual([1, 1, 1, 1, 1, 1, 0]);
+    })
+
+    test('selecting a space updates the possibleFilters', () => {
+      const spy = vi.spyOn(key, 'notifyListeners')
+      key.selectSpace(0);
+      expect(key.visibleFilters).toEqual([1, 1, 1, 1, 1, 1, 1]);
+      expect(spy).toHaveBeenCalledWith(
+          IdentificationEvents.filterBecameVisible,
+          { index: 6, filter: key.matrixFilters['da1bbf44-0a6c-4ab4-8853-78d271442644']}
+      )
+    })
+
+    test('deselecting a space updates the possibleFilters', () => {
+      const spy = vi.spyOn(key, 'notifyListeners')
+      key.selectSpace(0);
+      key.deselectSpace(0);
+      expect(key.visibleFilters).toEqual([1, 1, 1, 1, 1, 1, 0]);
+      expect(spy).toHaveBeenCalledWith(
+          IdentificationEvents.filterBecameInvisible,
+          { index: 6, filter: key.matrixFilters['da1bbf44-0a6c-4ab4-8853-78d271442644']}
+      )
+    })
+
+    test('deselecting a space automatically deselects spaces in a filter that becomes invisible', () => {
+      const restrictedSpace = { spaceIdentifier: 'da1bbf44-0a6c-4ab4-8853-78d271442644:179' } as MatrixFilterSpace
+      key.selectSpace(0)
+      key.selectSpace(key.findSpaceIndex(restrictedSpace))
+      expect(key.isSpaceSelected(restrictedSpace)).toEqual(true)
+      key.deselectSpace(0)
+      expect(key.isSpaceSelected(restrictedSpace)).toEqual(false)
+    })
+
+
+    // test('selecting a space only makes filters visible that are restricted by it', () => {
+    //   key.selectSpace(3, [3.0]);
+    //   expect(key.visibleFilters).toEqual([1, 0, 1]);
+    // })
+  })
 
   describe('fluid mode', () => {
     beforeEach(() => {
