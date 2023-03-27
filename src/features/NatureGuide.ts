@@ -134,6 +134,8 @@ export enum IdentificationEvents {
   beforeSpaceSelected = 'beforeSpaceSelected',
   spaceSelected = 'spaceSelected',
   spaceDeselected = 'spaceDeselected',
+  filterBecameVisible = 'filterBecameVisible',
+  filterBecameInvisible = 'filterBecameInvisible',
 }
 
 export type IdentificationEventCallback = {
@@ -332,6 +334,12 @@ export class IdentificationKey {
 
   constructor(init?: Partial<IdentificationKey>) {
     Object.assign(this, init)
+
+    // make sure we automatically deselect filters which are restricted and become invisible once the "parent" space is deselected
+    this.on(
+      IdentificationEvents.filterBecameInvisible,
+      (event: string, key: IdentificationKey, payload: { index: number, filter: MatrixFilter }) => this.deselectMatrixFilter(payload.filter)
+    )
   }
 
   addChild (child: IdentificationKeyReference) {
@@ -445,7 +453,14 @@ export class IdentificationKey {
     ]));
 
     this.visibleFilters = Object.values(this.matrixFilters).map((filter, index) => {
-      return this.filterVisibilityRestrictions[index].every(r => r.some(v => this.selectedSpaces[v] === 1)) ? 1 : 0;
+      const visible = this.filterVisibilityRestrictions[index].every(r => r.some(v => this.selectedSpaces[v] === 1))
+      if (visible && 0 === this.visibleFilters[index]) {
+        this.notifyListeners(IdentificationEvents.filterBecameVisible, { filter, index })
+      } else if (!visible && 1 === this.visibleFilters[index]) {
+        this.notifyListeners(IdentificationEvents.filterBecameInvisible, { filter, index })
+      }
+
+      return visible ? 1 : 0;
     });
 
     this.computeResults();
@@ -485,6 +500,12 @@ export class IdentificationKey {
     this.selectedSpaces[index] = 0;
     this.computePossibleValues();
     this.notifyListeners(IdentificationEvents.spaceDeselected, { index, encodedSpace });
+  }
+
+  deselectMatrixFilter (filter: MatrixFilter) {
+    filter.space.forEach(space => {
+      this.deselectSpace(this.findSpaceIndex(space))
+    })
   }
 
   findSpaceIndex (space: MatrixFilterSpace) {

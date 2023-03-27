@@ -1316,7 +1316,14 @@
                     "position": 7,
                     "description": null,
                     "weight": 1,
-                    "restrictions": {},
+                    "restrictions": {
+                        "96bdc492-b512-4cce-8574-5fd83e06ebfb": [
+                            {
+                                "spaceIdentifier": "96bdc492-b512-4cce-8574-5fd83e06ebfb:137",
+                                "encodedSpace": [0, 0, 0, 1]
+                            }
+                        ]
+                    },
                     "isRestricted": false,
                     "allowMultipleValues": true,
                     "identificationMeans": [],
