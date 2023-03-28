@@ -72,12 +72,6 @@
                                 ]
                             }
                         ],
-                        "75087d20-7447-4ff5-a10b-5495e88074be": [
-                            {
-                                "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:10.0",
-                                "encodedSpace": 10.0
-                            }
-                        ],
                         "7f496af4-8e98-4bb6-8f3b-09496c3a0efd": [
                             {
                                 "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:8.0",
@@ -146,12 +140,6 @@
                                     210,
                                     1
                                 ]
-                            }
-                        ],
-                        "75087d20-7447-4ff5-a10b-5495e88074be": [
-                            {
-                                "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:40.0",
-                                "encodedSpace": 40.0
                             }
                         ],
                         "7f496af4-8e98-4bb6-8f3b-09496c3a0efd": [
@@ -267,12 +255,6 @@
                                 ]
                             }
                         ],
-                        "75087d20-7447-4ff5-a10b-5495e88074be": [
-                            {
-                                "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:63.0",
-                                "encodedSpace": 63.0
-                            }
-                        ],
                         "7f496af4-8e98-4bb6-8f3b-09496c3a0efd": [
                             {
                                 "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:45.0",
@@ -368,12 +350,6 @@
                                 ]
                             }
                         ],
-                        "75087d20-7447-4ff5-a10b-5495e88074be": [
-                            {
-                                "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:95.0",
-                                "encodedSpace": 95.0
-                            }
-                        ],
                         "7f496af4-8e98-4bb6-8f3b-09496c3a0efd": [
                             {
                                 "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:38.0",
@@ -453,12 +429,6 @@
                                     100,
                                     1
                                 ]
-                            }
-                        ],
-                        "75087d20-7447-4ff5-a10b-5495e88074be": [
-                            {
-                                "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:100.0",
-                                "encodedSpace": 100.0
                             }
                         ],
                         "7f496af4-8e98-4bb6-8f3b-09496c3a0efd": [
@@ -568,12 +538,6 @@
                                 ]
                             }
                         ],
-                        "75087d20-7447-4ff5-a10b-5495e88074be": [
-                            {
-                                "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:20.0",
-                                "encodedSpace": 20.0
-                            }
-                        ],
                         "7f496af4-8e98-4bb6-8f3b-09496c3a0efd": [
                             {
                                 "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:16.0",
@@ -659,12 +623,6 @@
                                 ]
                             }
                         ],
-                        "75087d20-7447-4ff5-a10b-5495e88074be": [
-                            {
-                                "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:27.0",
-                                "encodedSpace": 27.0
-                            }
-                        ],
                         "7f496af4-8e98-4bb6-8f3b-09496c3a0efd": [
                             {
                                 "spaceIdentifier": "7f496af4-8e98-4bb6-8f3b-09496c3a0efd:23.0",
@@ -743,8 +701,11 @@
                         ],
                         "75087d20-7447-4ff5-a10b-5495e88074be": [
                             {
-                                "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:5.0",
-                                "encodedSpace": 5.0
+                                "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:WzEuMCwxNS4wXQ==",
+                                "encodedSpace": [
+                                    5,
+                                    10
+                                ]
                             }
                         ],
                         "7f496af4-8e98-4bb6-8f3b-09496c3a0efd": [
@@ -1211,9 +1172,9 @@
                 },
                 "75087d20-7447-4ff5-a10b-5495e88074be": {
                     "uuid": "75087d20-7447-4ff5-a10b-5495e88074be",
-                    "name": "maximale Körpergröße",
-                    "type": "NumberFilter",
-                    "position": 5,
+                    "name": "Körperlänge",
+                    "type": "RangeFilter",
+                    "position": 4,
                     "description": null,
                     "weight": 1,
                     "restrictions": {},
@@ -1222,41 +1183,19 @@
                     "identificationMeans": [],
                     "space": [
                         {
-                            "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:5.0",
-                            "encodedSpace": 5.0
-                        },
-                        {
-                            "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:10.0",
-                            "encodedSpace": 10.0
-                        },
-                        {
-                            "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:20.0",
-                            "encodedSpace": 20.0
-                        },
-                        {
-                            "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:27.0",
-                            "encodedSpace": 27.0
-                        },
-                        {
-                            "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:40.0",
-                            "encodedSpace": 40.0
-                        },
-                        {
-                            "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:63.0",
-                            "encodedSpace": 63.0
-                        },
-                        {
-                            "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:95.0",
-                            "encodedSpace": 95.0
-                        },
-                        {
-                            "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:100.0",
-                            "encodedSpace": 100.0
+                            "encodedSpace": [
+                                1.0,
+                                15.0
+                            ],
+                            "spaceIdentifier": "75087d20-7447-4ff5-a10b-5495e88074be:WzEuMCwxNS4wXQ=="
                         }
                     ],
                     "definition": {
+                        "min": null,
+                        "max": null,
+                        "step": 1.0,
                         "unit": "cm",
-                        "unit_verbose": "Zentimeter"
+                        "unit_verbose": ""
                     }
                 },
                 "7f496af4-8e98-4bb6-8f3b-09496c3a0efd": {

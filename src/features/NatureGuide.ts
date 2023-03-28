@@ -66,18 +66,22 @@ export class RangeFilter extends MatrixFilter {
   public encodedSpace: number[] = [];
 
   /**
-   * We clean up the space identifier to only contain the filter uuid
+   * Range filters only contain a single filter:
    *
    * @param space
    */
   addSpace (space: MatrixFilterSpace) {
+    if (this.space.length >= 1) {
+      return;
+    }
+
     space.spaceIdentifier = space.spaceIdentifier.split(':')[0];
-    super.addSpace(space);
+    this.space.push(space);
   }
 
   updateEncodedSpace (event: IdentificationEvents, identificationKey: IdentificationKey, payload: {}): void {
     const { index, encodedSpace } = payload as { index: number, encodedSpace: number[] };
-    if (identificationKey.spaces[index].spaceIdentifier !== this.uuid) {
+    if (identificationKey.spaces[index].spaceIdentifier.slice(0, 36) !== this.uuid) {
       return;
     }
 
@@ -88,15 +92,14 @@ export class RangeFilter extends MatrixFilter {
   }
 
   updateEncodedSpaceMapping (_: IdentificationEvents, identificationKey: IdentificationKey, index: number): void {
-    if (identificationKey.spaces[index].spaceIdentifier !== this.uuid) {
+    if (identificationKey.spaces[index].spaceIdentifier.slice(0, 36) !== this.uuid) {
       return;
     }
 
-    const space = this.space[0];
     let newMapping = (new Array(identificationKey.children.length).fill(1));
     if (this.encodedSpace.length > 0) {
       newMapping = newMapping.map((_, nodeIndex) => {
-        const filter = identificationKey.children[nodeIndex].space[space.spaceIdentifier];
+        const filter = identificationKey.children[nodeIndex].space[this.uuid];
         if (filter) {
           return filter.find((spaceRef: MatrixFilterSpaceReference) => {
             return (this.encodedSpace[0] >= spaceRef.encodedSpace[0]) &&
@@ -222,7 +225,13 @@ export class NatureGuide implements DetailFeature {
       key.addMatrixFilter(filter);
 
       value.space.forEach((space: MatrixFilterSpaceReference) => {
-        if (!spaces.find(([_, s]) => s.spaceIdentifier === space.spaceIdentifier)) {
+        if (
+          (
+            matrixFilterClass === RangeFilter &&
+            !spaces.find(([_, s]) => s.spaceIdentifier.slice(0, 36) === space.spaceIdentifier.slice(0, 36))
+          ) ||
+          !spaces.find(([_, s]) => s.spaceIdentifier === space.spaceIdentifier)
+        ) {
           spaces.push([filter, new MatrixFilterSpace({ ...space, points: filter.weight || 0 })]);
         }
       });
@@ -353,8 +362,8 @@ export class IdentificationKey {
 
     if (filter instanceof MatrixFilterClassMap.RangeFilter) {
       // register listener to update the space node mapping when the encoded space changes
-      this.on(IdentificationEvents.beforeSpaceSelected, filter.updateEncodedSpace);
-      this.on(IdentificationEvents.spaceInitialized, filter.updateEncodedSpaceMapping);
+      this.on(IdentificationEvents.beforeSpaceSelected, filter.updateEncodedSpace.bind(filter));
+      this.on(IdentificationEvents.spaceInitialized, filter.updateEncodedSpaceMapping.bind(filter));
     }
   }
 

@@ -4,7 +4,7 @@ import {
   IdentificationEvents,
   IdentificationModes,
   NatureGuide,
-  MatrixFilterSpace
+  MatrixFilterSpace, RangeFilter
 } from "../src/features/NatureGuide";
 import NatureGuideFixture from './fixtures/NatureGuide.json';
 
@@ -17,7 +17,7 @@ describe('IdentificationKey', () => {
   })
 
   test('creating a new IdentificationKey fills the spaceNodeMapping', () => {
-    expect(key.spaceNodeMapping.length).toEqual(52);
+    expect(key.spaceNodeMapping.length).toEqual(45);
     expect(key.spaceNodeMapping[0].length).toEqual(8);
   })
 
@@ -108,18 +108,41 @@ describe('IdentificationKey', () => {
     expect(listener).toHaveBeenCalledTimes(1);
   })
 
-  // describe('range filters', () => {
-  //   test('selecting a range filter space filters out nodes that are not in the range', () => {
-  //     key.selectSpace(3, [3.0]);
-  //     expect(key.possibleNodes).toEqual([0, 1, 1]);
-  //   })
-  //
-  //   test('selecting a range space again updates the possibleNodes', () => {
-  //     key.selectSpace(3, [3.0]);
-  //     key.selectSpace(3, [7.0]);
-  //     expect(key.possibleNodes).toEqual([0, 0, 1]);
-  //   })
-  // })
+  describe('range filters', () => {
+    test('a range filter can only a single space', () => {
+      const filter = new RangeFilter();
+      filter.addSpace(new MatrixFilterSpace({ spaceIdentifier: 'filter1:a' }));
+      filter.addSpace(new MatrixFilterSpace({ spaceIdentifier: 'filter1:b' }));
+      expect(filter.space.length).toEqual(1);
+    })
+
+    test('selecting a range filter updates the encoded space', () => {
+      expect(key.matrixFilters['75087d20-7447-4ff5-a10b-5495e88074be'].encodedSpace).toEqual([]);
+      const index = key.spaces.findIndex(s => s.spaceIdentifier.startsWith('75087d20-7447-4ff5-a10b-5495e88074be'));
+      key.selectSpace(index, [3]);
+      expect(key.matrixFilters['75087d20-7447-4ff5-a10b-5495e88074be'].encodedSpace).toEqual([3]);
+    })
+
+    test('updating a range filter updates the encoded space', () => {
+      expect(key.matrixFilters['75087d20-7447-4ff5-a10b-5495e88074be'].encodedSpace).toEqual([]);
+        const index = key.spaces.findIndex(s => s.spaceIdentifier.startsWith('75087d20-7447-4ff5-a10b-5495e88074be'));
+        key.selectSpace(index, [3]);
+        key.selectSpace(index, [8]);
+        expect(key.matrixFilters['75087d20-7447-4ff5-a10b-5495e88074be'].encodedSpace).toEqual([8]);
+    })
+
+    test('selecting a range filter space filters out nodes that are not in the range', () => {
+      const index = key.spaces.findIndex(s => s.spaceIdentifier.startsWith('75087d20-7447-4ff5-a10b-5495e88074be'));
+      key.selectSpace(index, [3]);
+      expect(key.possibleNodes).toEqual([0, 0, 0, 0, 0, 0, 0, 0]);
+      key.selectSpace(index, [5]);
+      expect(key.possibleNodes).toEqual([0, 0, 0, 0, 0, 0, 0, 1]);
+      key.selectSpace(index, [10]);
+      expect(key.possibleNodes).toEqual([0, 0, 0, 0, 0, 0, 0, 1]);
+      key.selectSpace(index, [11]);
+      expect(key.possibleNodes).toEqual([0, 0, 0, 0, 0, 0, 0, 0]);
+    })
+  })
 
   test('Getting the results returns the possible nodes', () => {
     key.selectSpace(0);
@@ -177,12 +200,6 @@ describe('IdentificationKey', () => {
       key.deselectSpace(0)
       expect(key.isSpaceSelected(restrictedSpace)).toEqual(false)
     })
-
-
-    // test('selecting a space only makes filters visible that are restricted by it', () => {
-    //   key.selectSpace(3, [3.0]);
-    //   expect(key.visibleFilters).toEqual([1, 0, 1]);
-    // })
   })
 
   describe('fluid mode', () => {
