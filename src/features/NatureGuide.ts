@@ -10,11 +10,11 @@ export type MatrixFilterSpaceReference = {
 export class MatrixFilterSpace {
   public spaceIdentifier: string = '';
   public encodedSpace: any = '';
-  public html?: string
+  public html?: string;
   public points?: number = 0;
 
   constructor(init?: Partial<MatrixFilterSpace>) {
-    Object.assign(this, init)
+    Object.assign(this, init);
   }
 }
 
@@ -52,7 +52,7 @@ export class MatrixFilter {
   public type: MatrixFilterType = "TextOnlyFilter";
 
   constructor(init?: Partial<MatrixFilterType>) {
-    Object.assign(this, init)
+    Object.assign(this, init);
   }
 
   addSpace (space: MatrixFilterSpace) {
@@ -165,8 +165,9 @@ export type IdentificationKeyReference = {
   name: string
   decisionRule: string
   taxon: TaxonReference | null
-  factSheets: any[] // todo: missing type info
+  templateContents: any[] // todo: missing type info
   slug: string
+  description: string | null
 }
 
 export type ResultAction = {
@@ -196,7 +197,7 @@ export class NatureGuide implements DetailFeature {
   public tree: Record<string, object> = {};
 
   constructor(init?: Partial<NatureGuide>) {
-    Object.assign(this, init)
+    Object.assign(this, init);
   }
 
   getIdentificationKey(uuid: string): IdentificationKey | null {
@@ -215,7 +216,7 @@ export class NatureGuide implements DetailFeature {
     // add children:
     children.forEach((child: IdentificationKeyReference) => {
       key.addChild(child);
-    })
+    });
 
     // add filters
     Object.values(filters).forEach((value) => {
@@ -235,13 +236,13 @@ export class NatureGuide implements DetailFeature {
           spaces.push([filter, new MatrixFilterSpace({ ...space, points: filter.weight || 0 })]);
         }
       });
-    })
+    });
 
     // add spaces
     spaces.forEach(([filter, space]) => {
       filter.addSpace(space);
       key.addSpace(space);
-    })
+    });
 
     // initial calculation
     key.computeFilterVisibilityRestrictions();
@@ -253,14 +254,16 @@ export class NatureGuide implements DetailFeature {
 
 export class IdentificationKey {
   public name: string = '';
+  public uuid: string = '';
   public taxon: TaxonReference | null = null;
   public children: IdentificationKeyReference[] = [];
   public childrenCount: number = 0;
-  public factSheets: any[] = [];
+  public templateContents: any[] = [];
   public slug: string = '';
   public overviewImage: string = '';
   public matrixFilters: Record<string, MatrixFilter> = {};
   public identificationMode: IdentificationModes = IdentificationModes.fluid;
+  public description: string = '';
 
   /**
    * A matrix that maps spaces to the nodes that they encode for. E.g. if the space "brown" for the filter "color" is
@@ -342,13 +345,13 @@ export class IdentificationKey {
   private listeners: Record<string, Function[]> = {};
 
   constructor(init?: Partial<IdentificationKey>) {
-    Object.assign(this, init)
+    Object.assign(this, init);
 
     // make sure we automatically deselect filters which are restricted and become invisible once the "parent" space is deselected
     this.on(
       IdentificationEvents.filterBecameInvisible,
-      (event: string, key: IdentificationKey, payload: { index: number, filter: MatrixFilter }) => this.deselectMatrixFilter(payload.filter)
-    )
+      (event: string, key: IdentificationKey, payload: { index: number, filter: MatrixFilter }) => this.deselectMatrixFilter(payload.filter),
+    );
   }
 
   addChild (child: IdentificationKeyReference) {
@@ -383,7 +386,7 @@ export class IdentificationKey {
       }
 
       return 0;
-    }))
+    }));
     this.notifyListeners(IdentificationEvents.spaceInitialized, this.spaces.length - 1);
   }
 
@@ -462,11 +465,11 @@ export class IdentificationKey {
     ]));
 
     this.visibleFilters = Object.values(this.matrixFilters).map((filter, index) => {
-      const visible = this.filterVisibilityRestrictions[index].every(r => r.some(v => this.selectedSpaces[v] === 1))
+      const visible = this.filterVisibilityRestrictions[index].every(r => r.some(v => this.selectedSpaces[v] === 1));
       if (visible && 0 === this.visibleFilters[index]) {
-        this.notifyListeners(IdentificationEvents.filterBecameVisible, { filter, index })
+        this.notifyListeners(IdentificationEvents.filterBecameVisible, { filter, index });
       } else if (!visible && 1 === this.visibleFilters[index]) {
-        this.notifyListeners(IdentificationEvents.filterBecameInvisible, { filter, index })
+        this.notifyListeners(IdentificationEvents.filterBecameInvisible, { filter, index });
       }
 
       return visible ? 1 : 0;
@@ -513,8 +516,8 @@ export class IdentificationKey {
 
   deselectMatrixFilter (filter: MatrixFilter) {
     filter.space.forEach(space => {
-      this.deselectSpace(this.findSpaceIndex(space))
-    })
+      this.deselectSpace(this.findSpaceIndex(space));
+    });
   }
 
   findSpaceIndex (space: MatrixFilterSpace) {

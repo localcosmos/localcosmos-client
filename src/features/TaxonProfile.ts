@@ -28,7 +28,7 @@ export type TaxonText = {
   longTextKey: string
 }
 
-export type Taxon = {
+export type TaxonProfile = {
   nameUuid: string
   taxonNuid: string
   taxonAuthor: string
@@ -64,7 +64,7 @@ export type SearchableTaxonReference = TaxonReference & {
   imageUrl: string | null,
 }
 
-export function taxonToReference (taxon: Taxon): Partial<TaxonReference> {
+export function taxonToReference (taxon: TaxonProfile): Partial<TaxonReference> {
   if (!taxon) {
     return {}
   }
