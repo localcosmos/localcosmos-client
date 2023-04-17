@@ -1,6 +1,6 @@
 {
   "name": "localcosmos-client",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "source": "src/index.ts",
   "main": "dist/main.js",
   "module": "dist/localcosmos-client.js",
