@@ -12,7 +12,7 @@ export type FeatureReference = {
 export type Feature = {
   genericContentType: FeatureType
   uuid: string
-  name: { [locale: string]: string }
+  name: string
   version: number
   path: string
   folder: string
@@ -22,13 +22,13 @@ export type Feature = {
 export type DetailFeature = {
   uuid: string,
   version: number
-  options: any // todo: type unknown
-  globalOptions: any // todo: type unknown
+  options: Record<string, any>,
+  globalOptions: Record<string, any>
   name: string,
   slug: string
 }
 
-type ListFeature = {
+export type ListFeature = {
   list: Feature[],
   lookup: Record<string, string>
 }
@@ -38,13 +38,29 @@ export type NatureGuideFeature = Feature & {
   imageUrl: string
 }
 
+export type TemplateContentFeature = ListFeature & {
+  assignments: {
+    string: Record<string,string>
+  },
+  navigations: Record<string, any>
+}
+
+export type GlossaryFeature = Feature & {
+  localized: any,
+}
+
+export type TaxonProfilesFeature = Feature & {
+  search: any,
+  registry: any,
+}
+
 export type Features = {
   slugs: Record<string, string>,
-  Frontend?: Feature,
-  Glossary?: Feature,
-  BackboneTaxonomy?: Feature,
+  Frontend: Feature,
+  Glossary?: GlossaryFeature,
+  BackboneTaxonomy: Feature,
   NatureGuide?: ListFeature,
   GenericForm?: ListFeature,
-  TaxonProfiles?: Feature,
-  TemplateContent?: Feature,
+  TaxonProfiles: TaxonProfilesFeature,
+  TemplateContent?: TemplateContentFeature,
 }

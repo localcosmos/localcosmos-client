@@ -1,5 +1,4 @@
-// todo: this is wip, taxon type is wrong, not exporting a detailfeature
-
+import { Taxon } from './BackboneTaxonomy';
 import { Image } from '../Image';
 import { MatrixFilter } from './NatureGuide';
 import { GenericFormReference } from './GenericForm';
@@ -28,12 +27,7 @@ export type TaxonText = {
   longTextKey: string
 }
 
-export type Taxon = {
-  nameUuid: string
-  taxonNuid: string
-  taxonAuthor: string
-  taxonSource: string
-  taxonLatname: string
+export type TaxonProfile = Taxon & {
   vernacular: { [locale: string]: string }
   allVernacularNames: { [locale: string]: string }
   nodeNames: string[]
@@ -48,32 +42,27 @@ export type Taxon = {
   tags: string[]
 }
 
-export type TaxonReference = {
-  nameUuid: string
-  taxonSource: string
-  taxonLatname: string
-  taxonAuthor: string
-  taxonNuid: string
+export type TaxonReference = Taxon & {
   vernacularNames: { [locale: string]: string }
   alternativeVernacularNames: { [locale: string]: string }
   images: TaxonImageSet
 }
 
-export type SearchableTaxonReference = TaxonReference & {
+export type LocalizedTaxonReference = TaxonReference & {
   name: string,
   imageUrl: string | null,
 }
 
-export function taxonToReference (taxon: Taxon): Partial<TaxonReference> {
-  if (!taxon) {
-    return {}
+export function taxonToReference (taxonProfile: TaxonProfile): Taxon | undefined {
+  if (!taxonProfile) {
+    return;
   }
 
   return {
-    nameUuid: taxon.nameUuid,
-    taxonSource: taxon.taxonSource,
-    taxonLatname: taxon.taxonLatname,
-    taxonAuthor: taxon.taxonAuthor,
-    taxonNuid: taxon.taxonNuid,
+    nameUuid: taxonProfile.nameUuid,
+    taxonSource: taxonProfile.taxonSource,
+    taxonLatname: taxonProfile.taxonLatname,
+    taxonAuthor: taxonProfile.taxonAuthor,
+    taxonNuid: taxonProfile.taxonNuid,
   };
 }

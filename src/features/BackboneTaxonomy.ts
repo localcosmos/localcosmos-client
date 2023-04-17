@@ -4,3 +4,11 @@
 import {SearchableTaxonReference} from "./TaxonProfile";
 
 export type BackboneTaxonomy = SearchableTaxonReference[];
+
+export type Taxon = {
+    nameUuid: string
+    taxonNuid: string
+    taxonAuthor: string
+    taxonSource: string
+    taxonLatname: string
+}
