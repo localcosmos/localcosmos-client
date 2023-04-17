@@ -1,5 +1,6 @@
 import { DetailFeature } from "../Features";
 import { TaxonReference } from "./TaxonProfile";
+import { FrontendUserContentImage } from "./TemplateContent";
 import {cloneDeep} from "lodash";
 
 export type MatrixFilterSpaceReference = {
@@ -18,7 +19,11 @@ export class MatrixFilterSpace {
   }
 }
 
-export type DescriptiveTextAndImagesFilterSpace = MatrixFilterSpace
+export type DescriptiveTextAndImagesFilterSpace = MatrixFilterSpace & {
+  imageUrl: FrontendUserContentImage,
+  secondaryImageUrl: FrontendUserContentImage,
+}
+
 export type ColorFilterSpace = MatrixFilterSpace
 export type TextOnlyFilterSpace = MatrixFilterSpace
 export type TaxonFilterSpace = MatrixFilterSpace
