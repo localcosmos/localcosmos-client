@@ -1,12 +1,47 @@
-import { TaxonReference } from './TaxonProfile';
-import { DetailFeature } from "../Features";
+import { FeatureBase } from "../Features";
+import { TaxonomicRestriction } from "./BackboneTaxonomy";
 
-export type GenericFormFieldWidgetType = 'BackboneTaxonAutocompleteWidget' | 'MobilePositionInput' | 'SelectDateTimeWidget' | 'CameraAndAlbumWidget' | 'CheckboxInput' | 'TextInput' | 'Textarea' | 'MobileNumberInput' | 'CheckboxSelectMultiple' | 'Select' | 'PointOrAreaInput'
-export type GenericFormFieldType = 'TaxonField' | 'PointJSONField' | 'GeoJSONField' | 'DateTimeJSONField' | 'PictureField' | 'BooleanField' | 'CharField' | 'DecimalField' | 'FloatField' | 'IntegerField' | 'MultipleChoiceField' | 'ChoiceField'
-export type GenericFormFieldRole = 'taxonomic_reference' | 'geographic_reference' | 'temporal_reference' | 'regular'
+export enum GenericFormFieldWidgetType {
+  BackboneTaxonAutocompleteWidget = 'BackboneTaxonAutocompleteWidget',
+  MobilePositionInput = 'MobilePositionInput',
+  SelectDateTimeWidget = 'SelectDateTimeWidget',
+  CameraAndAlbumWidget = 'CameraAndAlbumWidget',
+  CheckboxInput = 'CheckboxInput',
+  TextInput = 'TextInput',
+  Textarea = 'Textarea',
+  MobileNumberInput = 'MobileNumberInput',
+  CheckboxSelectMultiple = 'CheckboxSelectMultiple',
+  Select = 'Select',
+  PointOrAreaInput = 'PointOrAreaInput',
+}
 
-export type TaxonomicRestriction = Omit<TaxonReference, 'vernacularNames' | 'alternativeVernacularNames'> & {
-  restrictionType: 'exists' // todo: missing type options
+export enum GenericFormFieldType {
+  TaxonField = 'TaxonField',
+  PointJSONField = 'PointJSONField',
+  GeoJSONField = 'GeoJSONField',
+  DateTimeJSONField = 'DateTimeJSONField',
+  PictureField = 'PictureField',
+  BooleanField = 'BooleanField',
+  CharField = 'CharField',
+  DecimalField = 'DecimalField',
+  FloatField = 'FloatField',
+  IntegerField = 'IntegerField',
+  MultipleChoiceField = 'MultipleChoiceField',
+  ChoiceField = 'ChoiceField',
+  FixedTaxonWidget = 'FixedTaxonWidget',
+}
+
+export enum GenericFormFieldRole {
+  taxonomicReference = 'taxonomicReference',
+  geographicReference = 'geographicReference',
+  temporalReference = 'temporalReference',
+  regular = 'regular',
+}
+
+export type WidgetAttrs = {
+  min: number,
+  max: number,
+  step: number
 }
 
 export type GenericFormFieldDefinition = {
@@ -16,6 +51,7 @@ export type GenericFormFieldDefinition = {
   label: string,
   helpText: string,
   initial: unknown, // initial selected value
+  unit?: string,
   choices?: string[][], // options for select type [[key, value], ...]
 }
 
@@ -26,12 +62,11 @@ export type GenericFormField = {
   role: GenericFormFieldRole,
   definition: GenericFormFieldDefinition,
   position: number,
-  options: object, // todo: missing type info
-  widgetAttrs: Record<string, unknown>, // html-attributes for the input field
+  widgetAttrs: WidgetAttrs,
   taxonomicRestrictions: TaxonomicRestriction[],
 }
 
-export type GenericForm = DetailFeature & {
+export type GenericForm = FeatureBase & {
   fields: GenericFormField[],
   taxonomicRestrictions: TaxonomicRestriction[],
   taxonomicReference: string,
