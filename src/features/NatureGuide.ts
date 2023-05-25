@@ -1,7 +1,8 @@
-import { DetailFeature } from "../Features";
-import { TaxonReference } from "./TaxonProfile";
-import { FrontendUserContentImage } from "./TemplateContent";
-import {cloneDeep} from "lodash";
+import { FeatureBase } from "../Features";
+import { Taxon } from "./BackboneTaxonomy";
+import { ImageUrls } from "../Image";
+// this should be replaced with something independant
+import { cloneDeep } from "lodash";
 
 export type MatrixFilterSpaceReference = {
   spaceIdentifier: string,
@@ -20,21 +21,32 @@ export class MatrixFilterSpace {
 }
 
 export type DescriptiveTextAndImagesFilterSpace = MatrixFilterSpace & {
-  imageUrl: FrontendUserContentImage,
-  secondaryImageUrl: FrontendUserContentImage,
+  imageUrl: ImageUrls,
+  secondaryImageUrl: ImageUrls,
 }
 
 export type ColorFilterSpace = MatrixFilterSpace
 export type TextOnlyFilterSpace = MatrixFilterSpace
 export type TaxonFilterSpace = MatrixFilterSpace
 
-export type MatrixFilterType =
-  'DescriptiveTextAndImagesFilter'
-  | 'TextOnlyFilter'
-  | 'ColorFilter'
-  | 'RangeFilter'
-  | 'NumberFilter'
-  | 'TaxonFilter';
+export enum MatrixFilterType {
+  DescriptiveTextAndImagesFilter = 'DescriptiveTextAndImagesFilter',
+  TextOnlyFilter = 'TextOnlyFilter',
+  ColorFilter = 'ColorFilter',
+  RangeFilter = 'RangeFilter',
+  NumberFilter = 'NumberFilter',
+  TaxonFilter = 'TaxonFilter',
+}
+
+export enum IdentificationMeans {
+  visual = 'visual',
+  tactile = 'tactile',
+  auditory = 'auditory',
+  microscope = 'microscope',
+  scalpel = 'scalpel',
+  gustatory = 'gustatory',
+  olfactory = 'olfactory',
+}
 
 type MatrixFilterRestriction = {
   spaceIdentifier: string
@@ -49,18 +61,22 @@ export class MatrixFilter {
   public weight: number = 1;
   public allowMultipleValues: boolean = false;
   public restrictions: Record<string, MatrixFilterRestriction[]> = {};
+  public isRestricted: boolean = false;
+  public idenficitationMeans: IdentificationMeans[] = [];
   public definition: object = {};
 
   public space: MatrixFilterSpace[] = [];
   public position: number = 1;
 
-  public type: MatrixFilterType = "TextOnlyFilter";
+  // there should not be a default type.
+  //public type: MatrixFilterType = MatrixFilterType.TextOnlyFilter;
+
 
   constructor(init?: Partial<MatrixFilterType>) {
     Object.assign(this, init);
   }
 
-  addSpace (space: MatrixFilterSpace) {
+  addSpace(space: MatrixFilterSpace) {
     if (!this.space.find(s => s.spaceIdentifier === space.spaceIdentifier)) {
       this.space.push(space);
     }
@@ -68,6 +84,9 @@ export class MatrixFilter {
 }
 
 export class RangeFilter extends MatrixFilter {
+
+  public type: MatrixFilterType = MatrixFilterType.RangeFilter;
+
   public encodedSpace: number[] = [];
 
   /**
@@ -75,7 +94,7 @@ export class RangeFilter extends MatrixFilter {
    *
    * @param space
    */
-  addSpace (space: MatrixFilterSpace) {
+  addSpace(space: MatrixFilterSpace) {
     if (this.space.length >= 1) {
       return;
     }
@@ -84,7 +103,7 @@ export class RangeFilter extends MatrixFilter {
     this.space.push(space);
   }
 
-  updateEncodedSpace (event: IdentificationEvents, identificationKey: IdentificationKey, payload: {}): void {
+  updateEncodedSpace(event: IdentificationEvents, identificationKey: IdentificationKey, payload: {}): void {
     const { index, encodedSpace } = payload as { index: number, encodedSpace: number[] };
     if (identificationKey.spaces[index].spaceIdentifier.slice(0, 36) !== this.uuid) {
       return;
@@ -96,7 +115,7 @@ export class RangeFilter extends MatrixFilter {
     this.updateEncodedSpaceMapping(event, identificationKey, index);
   }
 
-  updateEncodedSpaceMapping (_: IdentificationEvents, identificationKey: IdentificationKey, index: number): void {
+  updateEncodedSpaceMapping(_: IdentificationEvents, identificationKey: IdentificationKey, index: number): void {
     if (identificationKey.spaces[index].spaceIdentifier.slice(0, 36) !== this.uuid) {
       return;
     }
@@ -122,11 +141,25 @@ export class RangeFilter extends MatrixFilter {
   }
 }
 
-export class DescriptiveTextAndImagesFilter extends MatrixFilter {}
-export class ColorFilter extends MatrixFilter {}
-export class NumberFilter extends MatrixFilter {}
-export class TextOnlyFilter extends MatrixFilter {}
-export class TaxonFilter extends MatrixFilter {}
+export class DescriptiveTextAndImagesFilter extends MatrixFilter {
+  public type: MatrixFilterType = MatrixFilterType.DescriptiveTextAndImagesFilter;
+}
+
+export class ColorFilter extends MatrixFilter {
+  public type: MatrixFilterType = MatrixFilterType.ColorFilter;
+}
+
+export class NumberFilter extends MatrixFilter {
+  public type: MatrixFilterType = MatrixFilterType.NumberFilter;
+}
+
+export class TextOnlyFilter extends MatrixFilter {
+  public type: MatrixFilterType = MatrixFilterType.TextOnlyFilter;
+}
+
+export class TaxonFilter extends MatrixFilter {
+  public type: MatrixFilterType = MatrixFilterType.TaxonFilter;
+}
 
 export const MatrixFilterClassMap = {
   DescriptiveTextAndImagesFilter,
@@ -163,20 +196,25 @@ export enum IdentificationModes {
 export type IdentificationKeyReference = {
   uuid: string
   nodeType: NodeTypes
-  imageUrl: string // todo: is this actually a lookup dict? 1x, 2x, 4x?
+  imageUrl: ImageUrls
   space: Record<string, MatrixFilterSpaceReference[]>,
   maxPoints: number
   isVisible: boolean
   name: string
   decisionRule: string
-  taxon: TaxonReference | null
+  taxon: Taxon | null
   templateContents: any[] // todo: missing type info
   slug: string
   description: string | null
 }
 
+export enum ResultActions {
+  TaxonProfiles = 'TaxonProfiles',
+  GenericForm = 'GenericForm',
+}
+
 export type ResultAction = {
-  feature: 'TaxonProfiles' | 'GenericForm',
+  feature: ResultActions,
   uuid: string,
 }
 
@@ -184,7 +222,7 @@ export type NatureGuideOptions = {
   resultAction: ResultAction
 }
 
-export class NatureGuide implements DetailFeature {
+export class NatureGuide implements FeatureBase {
   public name = '';
   public slug = '';
   public uuid = '';
@@ -258,16 +296,17 @@ export class NatureGuide implements DetailFeature {
 }
 
 export class IdentificationKey {
-  public name: string = '';
   public uuid: string = '';
-  public taxon: TaxonReference | null = null;
+  public name: string = '';
+  public morphotype: string | null = null;
+  public taxon: Taxon | null = null;
   public children: IdentificationKeyReference[] = [];
   public childrenCount: number = 0;
   public templateContents: any[] = [];
   public slug: string = '';
-  public overviewImage: string = '';
+  public overviewImage: ImageUrls | null = null;
   public matrixFilters: Record<string, MatrixFilter> = {};
-  public identificationMode: IdentificationModes = IdentificationModes.fluid;
+  public identificationMode: IdentificationModes = IdentificationModes.strict;
   public description: string = '';
 
   /**
@@ -359,12 +398,12 @@ export class IdentificationKey {
     );
   }
 
-  addChild (child: IdentificationKeyReference) {
+  addChild(child: IdentificationKeyReference) {
     this.children.push(child);
     this.possibleNodes.push(1);
   }
 
-  addMatrixFilter (filter: MatrixFilter) {
+  addMatrixFilter(filter: MatrixFilter) {
     this.matrixFilters[filter.uuid] = filter;
     this.visibleFilters.push(Object.keys(filter.restrictions).length > 0 ? 0 : 1);
 
@@ -375,7 +414,7 @@ export class IdentificationKey {
     }
   }
 
-  addSpace (space: MatrixFilterSpace) {
+  addSpace(space: MatrixFilterSpace) {
     if (this.spaces.find(s => s.spaceIdentifier === space.spaceIdentifier)) {
       return;
     }
@@ -398,7 +437,7 @@ export class IdentificationKey {
   /**
    * Make sure this is called after all filters and spaces have been added
    */
-  computeFilterVisibilityRestrictions () {
+  computeFilterVisibilityRestrictions() {
     this.filterVisibilityRestrictions = Object.values(this.matrixFilters).map((filter) => {
       return Object.values(filter.restrictions).map((restriction: MatrixFilterSpace[]) => {
         return restriction.map((space) => {
@@ -414,7 +453,7 @@ export class IdentificationKey {
    * @param event
    * @param callback
    */
-  on (event: IdentificationEvents, callback: Function): void {
+  on(event: IdentificationEvents, callback: Function): void {
     if (!this.listeners[event]) {
       this.listeners[event] = [];
     }
@@ -427,7 +466,7 @@ export class IdentificationKey {
    * @param event
    * @param callback
    */
-  off (event: IdentificationEvents, callback: Function): void {
+  off(event: IdentificationEvents, callback: Function): void {
     if (this.listeners[event]) {
       this.listeners[event] = this.listeners[event].filter(f => f !== callback);
     }
@@ -440,13 +479,13 @@ export class IdentificationKey {
    * @param payload optional payload for the event
    * @private
    */
-  notifyListeners (event: IdentificationEvents, ...payload: any[]) {
+  notifyListeners(event: IdentificationEvents, ...payload: any[]) {
     (this.listeners[event] || []).forEach((callback) => {
       callback.call(callback, event, this, ...payload);
     });
   }
 
-  computePossibleValues () {
+  computePossibleValues() {
     this.possibleNodes = this.children.map((_, nodeIndex) => {
       return this.spaces.reduce((a, b, spaceIndex) => {
         return a && (this.spaceNodeMapping[spaceIndex][nodeIndex] === 1 && this.selectedSpaces[spaceIndex] === 1 || this.selectedSpaces[spaceIndex] === 0);
@@ -483,12 +522,12 @@ export class IdentificationKey {
     this.computeResults();
   }
 
-  computeResults () {
+  computeResults() {
     this.results = this.sortNodes(this.children.filter((_, index) => this.possibleNodes[index] === 1));
     this.impossibleResults = this.sortNodes(this.children.filter((_, index) => this.possibleNodes[index] === 0));
   }
 
-  private sortNodes (nodes: IdentificationKeyReference[]) {
+  private sortNodes(nodes: IdentificationKeyReference[]) {
     return nodes.sort((a, b) => {
       return ((this.points[b.uuid] || 0) / b.maxPoints) - ((this.points[a.uuid] || 0) / a.maxPoints);
     });
@@ -498,7 +537,7 @@ export class IdentificationKey {
    * Select Space:
    * To select a space we flip the value in `selectedSpaces` to 1 and compute the follow-up matrices
    */
-  selectSpace (index: number, encodedSpace: any = null) {
+  selectSpace(index: number, encodedSpace: any = null) {
     this.notifyListeners(IdentificationEvents.beforeSpaceSelected, { index, encodedSpace });
 
     if (this.selectedSpaces[index] === 1 || this.possibleSpaces[index] === 0) {
@@ -510,7 +549,7 @@ export class IdentificationKey {
     this.notifyListeners(IdentificationEvents.spaceSelected, { index, encodedSpace });
   }
 
-  deselectSpace (index: number, encodedSpace: any = null) {
+  deselectSpace(index: number, encodedSpace: any = null) {
     if (this.selectedSpaces[index] === 0) {
       return;
     }
@@ -519,29 +558,29 @@ export class IdentificationKey {
     this.notifyListeners(IdentificationEvents.spaceDeselected, { index, encodedSpace });
   }
 
-  deselectMatrixFilter (filter: MatrixFilter) {
+  deselectMatrixFilter(filter: MatrixFilter) {
     filter.space.forEach(space => {
       this.deselectSpace(this.findSpaceIndex(space));
     });
   }
 
-  findSpaceIndex (space: MatrixFilterSpace) {
+  findSpaceIndex(space: MatrixFilterSpace) {
     return this.spaces.findIndex(s => s.spaceIdentifier === space.spaceIdentifier);
   }
 
-  findFilterIndex (filter: MatrixFilter) {
+  findFilterIndex(filter: MatrixFilter) {
     return Object.values(this.matrixFilters).findIndex(f => f.uuid === filter.uuid);
   }
 
-  isSpaceSelected (space: MatrixFilterSpace): boolean {
+  isSpaceSelected(space: MatrixFilterSpace): boolean {
     return this.selectedSpaces[this.findSpaceIndex(space)] === 1;
   }
 
-  isSpacePossible (space: MatrixFilterSpace): boolean {
+  isSpacePossible(space: MatrixFilterSpace): boolean {
     return this.possibleSpaces[this.findSpaceIndex(space)] === 1;
   }
 
-  isFilterVisible (filter: MatrixFilter): boolean {
+  isFilterVisible(filter: MatrixFilter): boolean {
     return this.visibleFilters[this.findFilterIndex(filter)] === 1;
   }
 }
