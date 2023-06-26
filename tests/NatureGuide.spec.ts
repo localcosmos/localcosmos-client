@@ -225,4 +225,93 @@ describe('IdentificationKey', () => {
       expect(key.points[key.children[2].uuid]).toEqual(2);
     })
   });
+
+  describe('identificationKeyDone event', () => {
+    test('is fired when only one result is left', () => {
+      const listener = vi.fn();
+      key.on(IdentificationEvents.identificationKeyDone, listener);
+      expect(listener).not.toHaveBeenCalled();
+
+      key.selectSpace(2);
+      expect(listener).toHaveBeenCalled();
+      expect(listener.mock.calls[0][0]).toEqual(IdentificationEvents.identificationKeyDone);
+      expect(listener.mock.calls[0][2].resultCount).toEqual(1);
+    });
+
+    test('is fired when all filters are selected', () => {
+      const natureGuide = new NatureGuide({
+        uid: "asd",
+        tree: {
+          a: {
+            uuid: "a",
+            name: "a",
+            children: [
+              {
+                uuid: 'b',
+                name: 'b',
+                space: {
+                  f1: [{ spaceIdentifier: 'f1:0', encodedSpace: [0] }],
+                  f2: [{ spaceIdentifier: 'f2:0', encodedSpace: [0] }],
+                }
+              },
+              {
+                uuid: 'c',
+                name: 'c',
+                space: {
+                  f1: [{ spaceIdentifier: 'f1:0', encodedSpace: [0] }],
+                  f2: [{ spaceIdentifier: 'f2:0', encodedSpace: [0] }],
+                }
+              },
+            ],
+            matrixFilters: {
+              f1: {
+                uuid: 'f1',
+                name: 'f1',
+                type: "ColorFilter",
+                space: [
+                  { spaceIdentifier: 'f1:0', encodedSpace: [0] },
+                  { spaceIdentifier: 'f1:1', encodedSpace: [0] },
+                ]
+              },
+              f2: {
+                uuid: 'f2',
+                name: 'f2',
+                type: "ColorFilter",
+                space: [
+                  { spaceIdentifier: 'f2:0', encodedSpace: [0] },
+                  { spaceIdentifier: 'f2:1', encodedSpace: [0] },
+                ]
+              },
+            }
+          }
+        }
+      } as any as NatureGuide);
+      key = natureGuide.getIdentificationKey('a') as IdentificationKey;
+
+      const listener = vi.fn();
+      key.on(IdentificationEvents.identificationKeyDone, listener);
+      expect(listener).not.toHaveBeenCalled();
+
+      key.selectSpace(0);
+      key.selectSpace(2);
+
+      expect(listener).toHaveBeenCalled();
+      expect(listener.mock.calls[0][0]).toEqual(IdentificationEvents.identificationKeyDone);
+      expect(listener.mock.calls[0][2].resultCount).toEqual(2);
+    })
+  })
+
+  describe('doneFilters', () => {
+    test('selecting a space marks the filter as done', () => {
+      expect(key.doneFilters).toEqual([0, 0, 0, 0, 0, 0, 1]);
+      key.selectSpace(1);
+      expect(key.doneFilters).toEqual([1, 0, 0, 1, 0, 0, 1]);
+    })
+
+    test('selecting a space for a filter where multiple spaces are allowed marks the filter as done', () => {
+      expect(key.doneFilters).toEqual([0, 0, 0, 0, 0, 0, 1]);
+      key.selectSpace(0);
+      expect(key.doneFilters).toEqual([1, 0, 0, 0, 0, 0, 0]);
+    })
+  })
 })

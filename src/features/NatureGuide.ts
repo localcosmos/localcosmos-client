@@ -1,8 +1,8 @@
-import { FeatureBase } from "../Features";
-import { Taxon } from "./BackboneTaxonomy";
-import { ImageUrls } from "../Image";
+import {FeatureBase} from "../Features";
+import {Taxon} from "./BackboneTaxonomy";
+import {ImageUrls} from "../Image";
 // this should be replaced with something independant
-import { cloneDeep } from "lodash";
+import {cloneDeep} from "lodash";
 
 export type MatrixFilterSpaceReference = {
   spaceIdentifier: string,
@@ -177,6 +177,11 @@ export enum IdentificationEvents {
   spaceDeselected = 'spaceDeselected',
   filterBecameVisible = 'filterBecameVisible',
   filterBecameInvisible = 'filterBecameInvisible',
+
+  /**
+   * triggered when all possible choices are made
+   */
+  identificationKeyDone = 'identificationKeyDone',
 }
 
 export type IdentificationEventCallback = {
@@ -525,12 +530,44 @@ export class IdentificationKey {
   computeResults() {
     this.results = this.sortNodes(this.children.filter((_, index) => this.possibleNodes[index] === 1));
     this.impossibleResults = this.sortNodes(this.children.filter((_, index) => this.possibleNodes[index] === 0));
+
+    //if (this.results.length === 1 || this.doneFilters.every(v => v)) {
+    if (this.doneFilters.every(v => v)) {
+      this.notifyListeners(
+        IdentificationEvents.identificationKeyDone,
+        { resultCount: this.results.length },
+      )
+    }
   }
 
   private sortNodes(nodes: IdentificationKeyReference[]) {
     return nodes.sort((a, b) => {
       return ((this.points[b.uuid] || 0) / b.maxPoints) - ((this.points[a.uuid] || 0) / a.maxPoints);
     });
+  }
+
+  /**
+   * Returns true for each visible filter that either has a selected space or no possible space
+   *
+   * Use with care, as this is an expensive operation.
+   */
+  get doneFilters () {
+    return Object.values(this.matrixFilters).map((filter, index) => {
+      if (this.visibleFilters[index] === 0) {
+        return true;
+      }
+
+      // for each visible filter, check if it has at least one selected or possible space
+      // if not, then it is impossible
+      const spaceIndices = filter.space.map((space) => this.findSpaceIndex(space))
+
+      const hasOneSelectedSpace = spaceIndices
+        .some((spaceIndex) => this.selectedSpaces[spaceIndex] === 1);
+      const hasNoPossibleSpace = spaceIndices
+        .every((spaceIndex) => this.possibleSpaces[spaceIndex] === 0);
+
+      return hasOneSelectedSpace || hasNoPossibleSpace;
+    }).map(possible => possible ? 1 : 0);
   }
 
   /***
