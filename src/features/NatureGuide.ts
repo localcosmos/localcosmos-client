@@ -179,7 +179,7 @@ export enum IdentificationEvents {
   filterBecameInvisible = 'filterBecameInvisible',
 
   /**
-   * triggered when all possible choices are made or only one option is left
+   * triggered when all possible choices are made
    */
   identificationKeyDone = 'identificationKeyDone',
 }
@@ -531,7 +531,8 @@ export class IdentificationKey {
     this.results = this.sortNodes(this.children.filter((_, index) => this.possibleNodes[index] === 1));
     this.impossibleResults = this.sortNodes(this.children.filter((_, index) => this.possibleNodes[index] === 0));
 
-    if (this.results.length === 1 || this.doneFilters.every(v => v)) {
+    //if (this.results.length === 1 || this.doneFilters.every(v => v)) {
+    if (this.doneFilters.every(v => v)) {
       this.notifyListeners(
         IdentificationEvents.identificationKeyDone,
         { resultCount: this.results.length },
