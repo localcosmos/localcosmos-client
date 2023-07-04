@@ -1,8 +1,8 @@
-import {FeatureBase} from "../Features";
-import {Taxon} from "./BackboneTaxonomy";
-import {ImageUrls} from "../Image";
+import { FeatureBase } from "../Features";
+import { Taxon } from "./BackboneTaxonomy";
+import { ImageUrls } from "../Image";
 // this should be replaced with something independant
-import {cloneDeep} from "lodash";
+import { cloneDeep } from "lodash";
 
 export type MatrixFilterSpaceReference = {
   spaceIdentifier: string,
@@ -48,6 +48,14 @@ export enum IdentificationMeans {
   olfactory = 'olfactory',
 }
 
+export interface MatrixFilterTreeNode {
+  taxonNuid: string
+}
+
+export interface MatrixFilterMetaNode {
+  name: string
+}
+
 type MatrixFilterRestriction = {
   spaceIdentifier: string
   encodedSpace: string
@@ -64,6 +72,9 @@ export class MatrixFilter {
   public isRestricted: boolean = false;
   public idenficitationMeans: IdentificationMeans[] = [];
   public definition: object = {};
+
+  public treeNode: MatrixFilterTreeNode = { 'taxonNuid': '' }
+  public metaNode: MatrixFilterMetaNode = { 'name': '' }
 
   public space: MatrixFilterSpace[] = [];
   public position: number = 1;
@@ -551,7 +562,7 @@ export class IdentificationKey {
    *
    * Use with care, as this is an expensive operation.
    */
-  get doneFilters () {
+  get doneFilters() {
     return Object.values(this.matrixFilters).map((filter, index) => {
       if (this.visibleFilters[index] === 0) {
         return true;

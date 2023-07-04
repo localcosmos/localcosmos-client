@@ -64,6 +64,7 @@ export type TraitValue = {
 export type Trait = {
   matrixFilter: MatrixFilter,
   values: TraitValue[],
+  hasMoreSpecificOccurrence: boolean,
 }
 
 export type TaxonText = {
