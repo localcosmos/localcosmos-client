@@ -41,6 +41,7 @@ type FrontendBaseSettings = {
   APP_UUID: string
   APP_VERSION: number
   API_URL: string
+  MEDIA_URL: string
   LANGUAGES: string[]
   PRIMARY_LANGUAGE: string
   PREVIEW: boolean

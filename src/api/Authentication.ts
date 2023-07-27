@@ -1,5 +1,7 @@
+import { ImageUrls } from "../Image";
 
 export interface LocalcosmosUser {
+  id: number,
   /** @format uuid */
   uuid: string;
   /**
@@ -14,6 +16,7 @@ export interface LocalcosmosUser {
    * @format email
    */
   email: string;
+  profilePicture: ImageUrls;
 }
 
 export interface Registration {
