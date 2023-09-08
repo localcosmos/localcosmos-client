@@ -1,4 +1,4 @@
-import { FeatureBase } from "../Features";
+import { FeatureBase } from "../types/Features";
 import { TaxonomicRestriction } from "./BackboneTaxonomy";
 
 export enum GenericFormFieldWidgetType {
@@ -13,6 +13,8 @@ export enum GenericFormFieldWidgetType {
   CheckboxSelectMultiple = 'CheckboxSelectMultiple',
   Select = 'Select',
   PointOrAreaInput = 'PointOrAreaInput',
+  FixedTaxonWidget = 'FixedTaxonWidget',
+  SelectTaxonWidget = 'SelectTaxonWidget',
 }
 
 export enum GenericFormFieldType {
@@ -28,7 +30,7 @@ export enum GenericFormFieldType {
   IntegerField = 'IntegerField',
   MultipleChoiceField = 'MultipleChoiceField',
   ChoiceField = 'ChoiceField',
-  FixedTaxonWidget = 'FixedTaxonWidget',
+  SelectTaxonField = 'SelectTaxonField',
 }
 
 export enum GenericFormFieldRole {
@@ -66,6 +68,10 @@ export type GenericFormField = {
   taxonomicRestrictions: TaxonomicRestriction[],
 }
 
+
+/**
+ * this type describes a file /localcosmos/features/Genericform/{uuid}/{uuid}.json
+ */
 export type GenericForm = FeatureBase & {
   fields: GenericFormField[],
   taxonomicRestrictions: TaxonomicRestriction[],

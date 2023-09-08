@@ -1,13 +1,13 @@
-import {GenericForm} from "../features/GenericForm";
-import {TaxonReference} from "../features/TaxonProfile";
+import { GenericForm } from "../features/GenericForm";
+import { TaxonType } from "../features/BackboneTaxonomy";
 
-export type DatasetTemporalValue = {
-  cron: {
-    timestamp: number
-  }
-}
+import { TemporalJson } from "../types/DateTime";
+import { GeoJSONFeature } from "../types/GeoJSON";
+import { LocalcosmosPublicUser } from "./PublicUser";
+import { ObservationFormReference } from "./ObservationForm";
+import { ImageUrls } from "../types/Image";
 
-export type DatasetValue = string | number | object | DatasetTemporalValue | File // todo add GeoJson Value + other object types specifically
+export type DatasetValue = string | number | object | TemporalJson | File // todo add GeoJson Value + other object types specifically
 
 export type Dataset = {
   uuid?: string,
@@ -15,23 +15,36 @@ export type Dataset = {
   data: Record<string, DatasetValue>,
 }
 
+
+export type DatasetReadOnlyImage = {
+  id: number,
+  dataset: string,
+  clientId: string,
+  fieldUuid: string,
+  image: string,
+  imageUrl: ImageUrls,
+}
+
 export type ReadOnlyDataset = {
-  coordinates: string,
-  geographicReference: string | any,
-  isPublished: boolean,
-  isValid: boolean,
-  taxon: TaxonReference,
-  timestamp: string,
-  user: string,
   uuid: string,
-  validationStep: 'completed' | string, // todo: unknown more
+  observationForm: ObservationFormReference,
+  data: Record<string, any>;
+  coordinates: GeoJSONFeature,
+  timestamp: string,
+  taxonSource: string,
+  taxonLatname: string,
+  taxonAuthor: string,
+  nameUuid: string,
+  taxonNuid: string,
+  images: Record<string,DatasetReadOnlyImage[]>,
+  user: LocalcosmosPublicUser | null,
+  validationStep: string,
 }
 
 export type DatasetCreateRequest = {
   data: Record<string, DatasetValue>,
   clientId: string,
   platform: string,
-  createdAt: string,
   observationForm: {
     uuid: string
     version: number,
@@ -42,3 +55,17 @@ export type DatasetListResponse = {
   count: number,
   results: ReadOnlyDataset[],
 }
+
+export const dateTimeToTemporalJson = (dateTime: Date):TemporalJson => {
+  const jsonTime: TemporalJson = {
+    type: 'Temporal',
+    cron: {
+      type: 'timestamp',
+      format: 'unixtime',
+      timestamp: dateTime.getTime(),
+      timezoneOffset: dateTime.getTimezoneOffset(),
+    }
+  };
+
+  return jsonTime
+};

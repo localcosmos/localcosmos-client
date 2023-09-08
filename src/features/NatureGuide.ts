@@ -1,6 +1,6 @@
-import { FeatureBase } from "../Features";
-import { Taxon } from "./BackboneTaxonomy";
-import { ImageUrls } from "../Image";
+import { FeatureBase } from "../types/Features";
+import { TaxonType } from "./BackboneTaxonomy";
+import { ImageUrls } from "../types/Image";
 // this should be replaced with something independant
 import { cloneDeep } from "lodash";
 
@@ -218,7 +218,7 @@ export type IdentificationKeyReference = {
   isVisible: boolean
   name: string
   decisionRule: string
-  taxon: Taxon | null
+  taxon: TaxonType | null
   templateContents: any[] // todo: missing type info
   slug: string
   description: string | null
@@ -315,7 +315,7 @@ export class IdentificationKey {
   public uuid: string = '';
   public name: string = '';
   public morphotype: string | null = null;
-  public taxon: Taxon | null = null;
+  public taxon: TaxonType | null = null;
   public children: IdentificationKeyReference[] = [];
   public childrenCount: number = 0;
   public templateContents: any[] = [];

@@ -1,4 +1,4 @@
-import { ImageUrls } from "../Image";
+import { ImageUrls } from "../types/Image";
 
 export interface LocalcosmosUser {
   id: number,
