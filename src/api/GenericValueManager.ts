@@ -11,9 +11,28 @@ const NoConverter = {
     return value;
   },
   compressedInitial (genericField: GenericFormField): number | string | null {
-    return null;
+    let initial = null;
+    if (genericField.definition.initial || genericField.definition.initial === 0) {
+      initial = genericField.definition.initial;
+    }
+    return initial;
   }
-}
+};
+
+const FloatConverter = {
+  compress(genericField: GenericFormField, value: number | string): number {
+    if (typeof value === 'string') {
+      value = parseFloat(value);
+    }
+    return value;
+  },
+  decompress(genericField: GenericFormField, value: number | string): number {
+    return FloatConverter.compress(genericField, value);
+  },
+  compressedInitial (genericField: GenericFormField): number | string | null {
+    return NoConverter.compressedInitial(genericField);
+  }
+};
 
 const B64Converter = {
   compress(genericField: GenericFormField, value: Record<string, any>): string {
@@ -25,9 +44,23 @@ const B64Converter = {
   compressedInitial (genericField: GenericFormField): string | null {
     return null;
   }
-}
+};
 
 export const GenericValueManager = {
+
+  TaxonField: {
+    compress(genericField: GenericFormField, value: TaxonType): string {
+      return B64Converter.compress(genericField, value);
+    },
+
+    decompress(genericField: GenericFormField, value: string): TaxonType | null {
+      return B64Converter.decompress(genericField, value) as TaxonType;
+    },
+
+    compressedInitial (genericField: GenericFormField): string | null {
+      return null;
+    }
+  },
 
   SelectTaxonField: {
     compress(genericField: GenericFormField, value: TaxonType): string {
@@ -61,9 +94,14 @@ export const GenericValueManager = {
 
   DateTimeJSONField: {
 
-    dateToFieldValue(date: Date, offset: number): string {
+    dateToFieldValue(genericField: GenericFormField, date: Date, offset: number): string {
       date.setMinutes(date.getMinutes() - offset);
-      const valueForField = date.toISOString().slice(0, 16);
+      let valueForField
+      if (genericField.definition.mode === 'date') {
+        valueForField = date.toISOString().slice(0, 10);
+      } else {
+        valueForField = date.toISOString().slice(0, 16);
+      }
       return valueForField;
     },
 
@@ -71,11 +109,11 @@ export const GenericValueManager = {
       if (value instanceof Date) {
         const outputDate = new Date(value);
         const offset = outputDate.getTimezoneOffset()
-        return this.dateToFieldValue(outputDate, offset);
+        return this.dateToFieldValue(genericField, outputDate, offset);
 
       } else if ('cron' in value) {
         const outputDate = new Date(value.cron.timestamp);
-        return this.dateToFieldValue(outputDate, value.cron.timezoneOffset);
+        return this.dateToFieldValue(genericField, outputDate, value.cron.timezoneOffset);
       }
 
       return '';
@@ -89,15 +127,33 @@ export const GenericValueManager = {
 
     compressedInitial(genericField: GenericFormField): string {
       const outputDate = new Date();
-      const offset = outputDate.getTimezoneOffset()
-      return this.dateToFieldValue(outputDate, offset);
+      const offset = outputDate.getTimezoneOffset();
+      return this.dateToFieldValue(genericField, outputDate, offset);
     },
   },
 
-  IntegerField: NoConverter,
-  DecimalField: NoConverter,
-  FloatField: NoConverter,
+  IntegerField: {
+    compress(genericField: GenericFormField, value: string | number): number {
+      if (typeof value === 'string') {
+        value = parseInt(value);
+      }
+      return value;
+    },
+
+    decompress(genericField: GenericFormField, value: string | number): number {
+      return GenericValueManager.IntegerField.compress(genericField, value);
+    },
+
+    compressedInitial (genericField: GenericFormField): string | number | null {
+      return NoConverter.compressedInitial(genericField);
+    }
+  },
+
+  DecimalField: FloatConverter,
+  FloatField: FloatConverter,
+
   CharField: NoConverter,
+  ChoiceField: NoConverter,
 
   PictureField: NoConverter,
 

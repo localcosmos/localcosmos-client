@@ -6,6 +6,7 @@ import { GeoJSONFeature } from "../types/GeoJSON";
 import { LocalcosmosPublicUser } from "./PublicUser";
 import { ObservationFormReference } from "./ObservationForm";
 import { ImageUrls } from "../types/Image";
+import { Taxon } from "../Taxon";
 
 export type DatasetValue = string | number | object | TemporalJson | File // todo add GeoJson Value + other object types specifically
 
@@ -51,9 +52,21 @@ export type DatasetCreateRequest = {
   },
 }
 
+export type DatasetListEntry = {
+  coordinates: GeoJSONFeature,
+  geographicReference: GeoJSONFeature,
+  isPublished: boolean,
+  isValid: boolean,
+  taxon: Taxon,
+  timestamp: string,
+  user: LocalcosmosPublicUser | null,
+  uuid: string,
+  validationStep: string,
+}
+
 export type DatasetListResponse = {
   count: number,
-  results: ReadOnlyDataset[],
+  results: DatasetListEntry[],
 }
 
 export const dateTimeToTemporalJson = (dateTime: Date):TemporalJson => {

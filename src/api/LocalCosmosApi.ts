@@ -179,9 +179,9 @@ export class LocalCosmosApi {
 
   }
 
-  async uploadProfilePicture(userId: string, token: string, image: Blob, cropParameters?: CropParameters) {
+  async uploadProfilePicture(userId: string, token: string, imageFilename: string, image: Blob, cropParameters?: CropParameters) {
     const formData = new FormData();
-    formData.append('sourceImage', image);
+    formData.append('sourceImage', image, imageFilename);
 
     if (cropParameters) {
       formData.append('cropParameters', cropParameters);
@@ -326,10 +326,10 @@ export class LocalCosmosApi {
   /**
    * DATASETS API
    */
-  async createDataset(dataset: Dataset, genericForm: GenericForm, clientId: string, platform: string, token: string | null): Promise<LCApiRequestResult> {
+  async createDataset(data: Record<string, any>, genericForm: GenericForm, clientId: string, platform: string, token: string | null): Promise<LCApiRequestResult> {
 
     const body: DatasetCreateRequest = {
-      data: dataset,
+      data: data,
       platform: platform,
       clientId: clientId,
       observationForm: {
@@ -353,9 +353,9 @@ export class LocalCosmosApi {
     return this.performFetch(url, options);
   }
 
-  async updateDataset(datasetUuid: string, dataset: Dataset, genericForm: GenericForm, clientId: string, platform: string, token: string | null): Promise<LCApiRequestResult> {
+  async updateDataset(datasetUuid: string, data: Record<string, any>, genericForm: GenericForm, clientId: string, platform: string, token: string | null): Promise<LCApiRequestResult> {
     const body: DatasetCreateRequest = {
-      data: dataset,
+      data: data,
       platform: platform,
       clientId: clientId,
       observationForm: {
@@ -399,15 +399,27 @@ export class LocalCosmosApi {
 
   async getDataset(uuid: string): Promise<LCApiRequestResult> {
 
-    let options = {
+    const options = {
       method: 'GET',
       headers: this.getHeaders(ContentTypes.json),
     };
 
-    let url = this.getUrl(`/dataset/${uuid}/`);
+    const url = this.getUrl(`/dataset/${uuid}/`);
 
     return this.performFetch(url, options);
 
+  }
+
+  async getDatasets(limit?: number, offset?: number): Promise<LCApiRequestResult> {
+
+    const options = {
+      method: 'GET',
+      headers: this.getHeaders(ContentTypes.json),
+    };
+
+    const url = this.getUrl(`/dataset/`);
+
+    return this.performFetch(url, options);
   }
 
   async deleteDataset(datasetUuid: string, clientId:string, token: string | null): Promise<LCApiRequestResult> {

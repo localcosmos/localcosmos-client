@@ -15,15 +15,18 @@ export type { FrontendSettings } from './types/Settings';
   Feature,
   Features,
   BackboneTaxonomyFeature,
+  NatureGuideFeature,
   NatureGuideListFeature,
+  GenericFormFeature,
   GenericFormListFeature,
   TemplateContentFeature,
+  TaxonProfilesFeature
 } from './types/Features';
 
+export { FeatureType } from './types/Features';
 /**
  * Definitions for explicit file of components in their corresponding folders
  */
-export type { NatureGuide } from './features/NatureGuide';
 export type { GenericForm } from './features/GenericForm';
 export type { Frontend } from './features/Frontend';
 export type { Map } from './features/Map';
@@ -34,6 +37,8 @@ export type { Map } from './features/Map';
 export type { GenericFormField, WidgetAttrs } from './features/GenericForm';
 export type {
   VernacularNamesLookup,
+  VernacularNamesList,
+  VernacularSearchTaxon,
   TaxonType,
   VernacularTaxonType,
   TaxonomicRestriction,
@@ -41,26 +46,50 @@ export type {
 } from './features/BackboneTaxonomy';
 export type { TemporalJson } from './types/DateTime';
 export type { GeoJSONFeature } from './types/GeoJSON';
-export type { ReadOnlyDataset, DatasetReadOnlyImage } from './api/Dataset';
+export type { Dataset, ReadOnlyDataset, DatasetReadOnlyImage } from './api/Dataset';
 export type { MapTaxonomicFilter } from './features/Map';
+export type { TaxonProfile, TaxonText } from './features/TaxonProfiles';
+export type { GlossaryEntry } from './features/Glossary';
+export type {
+  IdentificationKeyReference,
+  DescriptiveTextAndImagesFilterSpace,
+  ColorFilterSpace,
+  TextOnlyFilterSpace,
+  TaxonFilterSpace,
+} from './features/NatureGuide';
 
 /**
  * Usable classes, functions and enums of components
  */
-export { GenericFormFieldType, GenericFormFieldWidgetType } from './features/GenericForm';
+export { GenericFormFieldType, GenericFormFieldWidgetType, GenericFormFieldRole } from './features/GenericForm';
 export { Glossary } from './features/Glossary';
 export { BackboneTaxonomy } from './features/BackboneTaxonomy';
 export { TaxonProfiles } from './features/TaxonProfiles';
 export { dateTimeToTemporalJson } from './api/Dataset';
-export { pointLatLngToFeature } from './types/GeoJSON';
+export { pointLatLngToFeature, SupportedGeometries, SupportedCRS, GeoJSONFeatureType } from './types/GeoJSON';
 export { Taxon } from './Taxon';
 export { GenericValueManager } from './api/GenericValueManager';
+export {
+  NatureGuide,
+  IdentificationKey,
+  IdentificationEvents,
+  MatrixFilter,
+  MatrixFilterSpace,
+  IdentificationModes,
+  MatrixFilterType,
+  IdentificationMeans,
+  NodeTypes,
+  ResultActions,
+} from './features/NatureGuide';
+
+export { MapTypes } from './features/Map';
 
 /**
  * Definitions for Api Requests and Responses
  */
 export type {
   DatasetListResponse,
+  DatasetListEntry,
   DatasetCreateRequest,
 } from './api/Dataset';
 

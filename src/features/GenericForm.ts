@@ -52,8 +52,9 @@ export type GenericFormFieldDefinition = {
   isSticky: boolean,
   label: string,
   helpText: string,
-  initial: unknown, // initial selected value
+  initial: any,
   unit?: string,
+  mode?: string,
   choices?: string[][], // options for select type [[key, value], ...]
 }
 

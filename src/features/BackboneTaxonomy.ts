@@ -79,6 +79,9 @@ export class BackboneTaxonomy {
   vernacularNamesForSearch: VernacularNamesList = []
   vernacularNamesLookup: VernacularNamesLookup = {}
 
+  currentStartLetters: string | null = null
+  currentLatnamesForSearch:  TaxonLatnamesList = []
+
   maxResults: number = 10;
 
   constructor(private backboneTaxonomyFeature: BackboneTaxonomyFeature) {
@@ -88,6 +91,21 @@ export class BackboneTaxonomy {
   async loadLanguage(languageCode:string) {
     await this.loadVernacularFiles(languageCode);
     this.loadedLanguageCode = languageCode;
+  }
+
+  async loadLatnameFile(startLetters: string) {
+    const latnamesPath = `${this.backboneTaxonomyFeature.alphabet}/${startLetters}.json`;
+    const response = await fetch(latnamesPath);
+    if (response.ok) {
+      try {
+        this.currentLatnamesForSearch = await response.json();
+      }
+      catch (e) {
+        console.log(e);
+      }
+    } else {
+      this.currentLatnamesForSearch = [];
+    }
   }
 
   async loadVernacularFiles(languageCode: string) {
@@ -125,20 +143,62 @@ export class BackboneTaxonomy {
 
   }
 
-  searchLatnames(searchText: string) {
+  async searchLatnames(searchText: string): Promise<VernacularNamesList> {
+    searchText = searchText.toLocaleLowerCase();
 
+    const results:VernacularNamesList = [];
+    let resultCount = 0;
+
+    if (searchText.length >= 2) {
+      const startLetters = searchText.substring(0,2).toUpperCase();
+      if (startLetters != this.currentStartLetters) {
+        await this.loadLatnameFile(startLetters);
+      }
+    }
+
+    if (searchText.length >=3) {
+      this.currentLatnamesForSearch.every((taxon) => {
+
+        const taxonLatname = taxon.taxonLatname.toLowerCase();
+  
+        if (taxonLatname === searchText) {
+
+          const result = JSON.parse(JSON.stringify(taxon));
+          result.name = null;
+
+          results.unshift(result);
+          resultCount++;
+        } else if (taxonLatname.indexOf(searchText) === 0) {
+          const result = JSON.parse(JSON.stringify(taxon));
+          result.name = null;
+          results.push(result);
+          resultCount++;
+        }
+  
+        if (resultCount >= this.maxResults) {
+          return false;
+        }
+        return true;
+      });
+    }
+
+    return results;
   }
 
-  searchVernacularNames(searchText: string): VernacularSearchTaxon[] {
+  searchVernacularNames(searchText: string): VernacularNamesList {
+    searchText = searchText.toLowerCase();
 
     const results: VernacularSearchTaxon[] = [];
     let resultCount = 0;
 
     this.vernacularNamesForSearch.every((vernacularTaxon) => {
-      if (vernacularTaxon.name === searchText) {
+
+      const vernacularName = vernacularTaxon.name.toLowerCase();
+
+      if (vernacularName === searchText || vernacularName.indexOf(searchText) === 0) {
         results.unshift(vernacularTaxon);
         resultCount++;
-      } else if (vernacularTaxon.name.indexOf(searchText) === 0) {
+      } else if (vernacularName.indexOf(searchText) >= 0) {
         results.push(vernacularTaxon);
         resultCount++;
       }
@@ -152,14 +212,15 @@ export class BackboneTaxonomy {
     return results;
   }
 
-  searchTaxon(searchText: string, languageCode: string) {
-    const latnames = this.searchLatnames(searchText);
+  async searchTaxon(searchText: string): Promise<VernacularNamesList> {
+    const latnames = await this.searchLatnames(searchText);
     const vernacularNames = this.searchVernacularNames(searchText);
 
+    const results = vernacularNames.concat(latnames);
+    return results;
   }
 
   vernacular(nameUuid:string): string {
-    
     let name = '';
 
     if (nameUuid in this.vernacularNamesLookup) {
