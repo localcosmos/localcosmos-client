@@ -62,6 +62,7 @@ export type DatasetListEntry = {
   user: LocalcosmosPublicUser | null,
   uuid: string,
   validationStep: string,
+  image: ImageUrls,
 }
 
 export type DatasetListResponse = {

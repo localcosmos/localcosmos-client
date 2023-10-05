@@ -113,4 +113,11 @@ export class TaxonProfiles {
     const response = await fetch(this.taxonProfilesFeature.registry);
     this.registry = await response.json();
   }
+
+  getRegisteredTaxon (nameUuid: string): TaxonProfileReference | null {
+    if (nameUuid in this.registry) {
+      return this.registry[nameUuid];
+    }
+    return null;
+  }
 }

@@ -87,7 +87,7 @@ export interface Features {
   slugs: Record<string, string>,
   Frontend: Feature,
   BackboneTaxonomy: BackboneTaxonomyFeature,
-  TaxonProfiles: Feature,
+  TaxonProfiles: TaxonProfilesFeature,
   NatureGuide?: NatureGuideListFeature,
   GenericForm?: GenericFormListFeature,
   Map?: Feature,
