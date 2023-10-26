@@ -46,8 +46,13 @@ export type {
 } from './features/BackboneTaxonomy';
 export type { TemporalJson } from './types/DateTime';
 export type { GeoJSONFeature } from './types/GeoJSON';
-export type { Dataset, ReadOnlyDataset, DatasetReadOnlyImage } from './api/Dataset';
-export type { MapTaxonomicFilter } from './features/Map';
+export type { Dataset,
+  ReadOnlyDataset,
+  DatasetReadOnlyImage,
+  DatasetFilter,
+  DatasetFilterRequest
+} from './api/Dataset';
+export type { MapTaxonomicFilter, MapObservationFormFilter } from './features/Map';
 export type { TaxonProfile, TaxonText } from './features/TaxonProfiles';
 export type { GlossaryEntry } from './features/Glossary';
 export type {
@@ -65,7 +70,7 @@ export { GenericFormFieldType, GenericFormFieldWidgetType, GenericFormFieldRole 
 export { Glossary } from './features/Glossary';
 export { BackboneTaxonomy } from './features/BackboneTaxonomy';
 export { TaxonProfiles } from './features/TaxonProfiles';
-export { dateTimeToTemporalJson } from './api/Dataset';
+export { dateTimeToTemporalJson, Operators } from './api/Dataset';
 export { pointLatLngToFeature, SupportedGeometries, SupportedCRS, GeoJSONFeatureType } from './types/GeoJSON';
 export { Taxon } from './Taxon';
 export { GenericValueManager } from './api/GenericValueManager';

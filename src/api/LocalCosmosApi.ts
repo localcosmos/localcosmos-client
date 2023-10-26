@@ -7,7 +7,7 @@ import type {
 import type { CropParameters } from './ProfilePicture';
 
 import type { GenericForm } from '../features/GenericForm';
-import type { Dataset, DatasetCreateRequest } from './Dataset';
+import type { Dataset, DatasetCreateRequest, DatasetFilterRequest, Operators } from './Dataset';
 import type { ObservationFormCreateRequest } from './ObservationForm';
 
 export enum LCApiResultTypes {
@@ -303,7 +303,7 @@ export class LocalCosmosApi {
     return this.performFetch(url, options);
   }
 
-  async postObservationForm(genericForm: GenericForm): Promise<LCApiRequestResult> {
+  async postObservationForm(genericForm: GenericForm, token?: string): Promise<LCApiRequestResult> {
 
     const body: ObservationFormCreateRequest = {
       uuid: genericForm.uuid,
@@ -317,6 +317,10 @@ export class LocalCosmosApi {
       body: JSON.stringify(body)
     };
 
+    if (token) {
+      options.headers = this.getAuthedHeaders(token, ContentTypes.json);
+    }
+
     const url = this.getUrl(`/observation-form/`);
 
     return this.performFetch(url, options);
@@ -326,7 +330,7 @@ export class LocalCosmosApi {
   /**
    * DATASETS API
    */
-  async createDataset(data: Record<string, any>, genericForm: GenericForm, clientId: string, platform: string, token: string | null): Promise<LCApiRequestResult> {
+  async createDataset(data: Record<string, any>, genericForm: GenericForm, clientId: string, platform: string, token?: string): Promise<LCApiRequestResult> {
 
     const body: DatasetCreateRequest = {
       data: data,
@@ -344,7 +348,7 @@ export class LocalCosmosApi {
       body: JSON.stringify(body)
     };
 
-    if (token != null) {
+    if (token) {
       options.headers = this.getAuthedHeaders(token, ContentTypes.json);
     }
 
@@ -353,7 +357,7 @@ export class LocalCosmosApi {
     return this.performFetch(url, options);
   }
 
-  async updateDataset(datasetUuid: string, data: Record<string, any>, genericForm: GenericForm, clientId: string, platform: string, token: string | null): Promise<LCApiRequestResult> {
+  async updateDataset(datasetUuid: string, data: Record<string, any>, genericForm: GenericForm, clientId: string, platform: string, token?: string): Promise<LCApiRequestResult> {
     const body: DatasetCreateRequest = {
       data: data,
       platform: platform,
@@ -370,7 +374,7 @@ export class LocalCosmosApi {
       body: JSON.stringify(body)
     };
 
-    if (token != null) {
+    if (token) {
       options.headers = this.getAuthedHeaders(token, ContentTypes.json);
     }
 
@@ -417,12 +421,50 @@ export class LocalCosmosApi {
       headers: this.getHeaders(ContentTypes.json),
     };
 
-    const url = this.getUrl(`/dataset/`);
+    let url = this.getUrl(`/dataset/`);
+
+    if (limit){
+      url = `${url}?limit=${limit}`;
+    }
+
+    if (offset) {
+      if (limit) {
+        url = `${url}&offset=${offset}`;
+      } else {
+        url = `${url}?offset=${offset}`;
+      }
+    }
 
     return this.performFetch(url, options);
   }
 
-  async deleteDataset(datasetUuid: string, clientId:string, token: string | null): Promise<LCApiRequestResult> {
+  async getFilteredDatasets(filters: DatasetFilterRequest, limit?: number, offset?: number): Promise<LCApiRequestResult> {
+
+    const options = {
+      method: 'POST',
+      headers: this.getHeaders(ContentTypes.json),
+      body: JSON.stringify(filters),
+    };
+
+    let url = this.getUrl(`/datasets/`);
+
+    if (limit){
+      url = `${url}?limit=${limit}`;
+    }
+
+    if (offset) {
+      if (limit) {
+        url = `${url}&offset=${offset}`;
+      } else {
+        url = `${url}?offset=${offset}`;
+      }
+    }
+
+    return this.performFetch(url, options);
+
+  }
+
+  async deleteDataset(datasetUuid: string, clientId:string, token?: string): Promise<LCApiRequestResult> {
 
     const body = {
       clientId: clientId,
@@ -434,7 +476,7 @@ export class LocalCosmosApi {
       body: JSON.stringify(body)
     };
 
-    if (token != null) {
+    if (token) {
       options.headers = this.getAuthedHeaders(token, ContentTypes.json);
     }
 
@@ -443,7 +485,7 @@ export class LocalCosmosApi {
     return this.performFetch(url, options);
   }
 
-  async createDatasetImage(datasetUuid: string, fieldUuid:string, image: File|Blob, fileName: string, token?:string): Promise<LCApiRequestResult> {
+  async createDatasetImage(datasetUuid: string, fieldUuid:string, image: File|Blob, fileName: string, token?: string): Promise<LCApiRequestResult> {
 
     const formData = new FormData();
     formData.append('image', image, fileName);
@@ -453,7 +495,7 @@ export class LocalCosmosApi {
 
     let headers = new Headers();
 
-    if (token != null) {
+    if (token) {
       headers = this.addAuthorizationHeader(headers, token);
     }
 
@@ -467,7 +509,7 @@ export class LocalCosmosApi {
 
   }
 
-  async deleteDatasetImage(datasetUuid:string, imageId: number, clientId: string, token?:string): Promise<LCApiRequestResult> {
+  async deleteDatasetImage(datasetUuid:string, imageId: number, clientId: string, token?: string): Promise<LCApiRequestResult> {
 
     const body = {
       clientId: clientId
@@ -479,7 +521,7 @@ export class LocalCosmosApi {
       body: JSON.stringify(body),
     };
 
-    if (token != null) {
+    if (token) {
       options.headers = this.getAuthedHeaders(token, ContentTypes.json);
     }
     

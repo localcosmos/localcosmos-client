@@ -38,6 +38,7 @@ export type ReadOnlyDataset = {
   nameUuid: string,
   taxonNuid: string,
   images: Record<string,DatasetReadOnlyImage[]>,
+  imageUrl: ImageUrls,
   user: LocalcosmosPublicUser | null,
   validationStep: string,
 }
@@ -50,6 +51,23 @@ export type DatasetCreateRequest = {
     uuid: string
     version: number,
   },
+}
+
+export enum Operators {
+  equals = '=',
+  unEquals = '!=',
+  startswith = 'startswith',
+}
+
+export type DatasetFilter = {
+  column: string,
+  value: string,
+  operator: Operators,
+}
+
+export type DatasetFilterRequest = {
+  filters?: DatasetFilter[],
+  orderBy?: string,
 }
 
 export type DatasetListEntry = {

@@ -23,7 +23,6 @@ export type MapTaxonomicFilter = {
 }
 
 export type MapObservationFormFilter = {
-  observationformId: number,
   observationFormUuid: string,
   name: string,
 }
@@ -35,5 +34,5 @@ export type Map = FeatureBase & {
     projectArea?: GeoJSONFeatureCollection,
   },
   taxonomicFilters: MapTaxonomicFilter[],
-  observationFormfilters: MapObservationFormFilter[]
+  observationFormFilters: MapObservationFormFilter[]
 }
