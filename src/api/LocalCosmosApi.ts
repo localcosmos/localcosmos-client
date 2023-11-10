@@ -23,7 +23,7 @@ export type ServerErrorTypes = string | string[] | object;
 
 export interface LCApiRequestResult {
   type: LCApiResultTypes,
-  response: any,
+  response: Response,
   data: any,
   error: ServerErrorTypes,
 };
@@ -201,11 +201,11 @@ export class LocalCosmosApi {
     return await this.performFetch(url, options);
   }
 
-  async deleteProfilePicture(userId: string, token: string): Promise<LCApiRequestResult | null> {
+  async deleteProfilePicture(userId: string, token: string): Promise<LCApiRequestResult> {
 
     const result = await this.getProfilePicture(userId);
 
-    if (result.type == LCApiResultTypes.success) {
+    if (result.type === LCApiResultTypes.success) {
 
       const image = result.data;
 
@@ -224,7 +224,7 @@ export class LocalCosmosApi {
 
     }
 
-    return null;
+    return result;
 
   }
 

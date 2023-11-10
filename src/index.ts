@@ -1,7 +1,7 @@
 /**
  * Basic Types:
  */
-export type { ImageUrls } from './types/Image';
+export type { ImageUrls, ImageWithTextAndLicence } from './types/Image';
 
 /**
  * Definitions for the Settings.json file:
@@ -61,6 +61,7 @@ export type {
   ColorFilterSpace,
   TextOnlyFilterSpace,
   TaxonFilterSpace,
+  MatrixFilterDefinition,
 } from './features/NatureGuide';
 
 /**

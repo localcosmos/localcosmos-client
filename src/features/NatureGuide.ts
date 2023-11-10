@@ -1,6 +1,6 @@
 import { FeatureBase } from "../types/Features";
 import { TaxonType } from "./BackboneTaxonomy";
-import { ImageUrls } from "../types/Image";
+import { ImageUrls, ImageLicence } from "../types/Image";
 // this should be replaced with something independant
 import { cloneDeep } from "lodash";
 
@@ -22,10 +22,22 @@ export class MatrixFilterSpace {
 
 export type DescriptiveTextAndImagesFilterSpace = MatrixFilterSpace & {
   imageUrl: ImageUrls,
+  licence: ImageLicence,
   secondaryImageUrl: ImageUrls,
+  secondaryLicence: ImageLicence,
 }
 
-export type ColorFilterSpace = MatrixFilterSpace
+export enum ColorTypes {
+  single = 'single',
+  gradient = 'gradient',
+  triplet = 'triplet',
+}
+
+export type ColorFilterSpace = MatrixFilterSpace & {
+  gradient: boolean,
+  colorType: ColorTypes,
+  description: string,
+}
 export type TextOnlyFilterSpace = MatrixFilterSpace
 export type TaxonFilterSpace = MatrixFilterSpace
 
@@ -61,9 +73,21 @@ type MatrixFilterRestriction = {
   encodedSpace: string
 }
 
+export type MatrixFilterDefinition = {
+  min?: null | number,
+  max?: null | number,
+  step?: null | number,
+  unit?: string,
+  unitVerbose?: string,
+}
+
+// the defaults of Matrixfilter are just BS
+// this should be rewritten
 export class MatrixFilter {
   public uuid: string = '';
   public name: string = '';
+  // there should not be a default ype
+  public type: MatrixFilterType = MatrixFilterType.TextOnlyFilter;
   public description?: string | null = '';
 
   public weight: number = 1;
@@ -71,16 +95,13 @@ export class MatrixFilter {
   public restrictions: Record<string, MatrixFilterRestriction[]> = {};
   public isRestricted: boolean = false;
   public idenficitationMeans: IdentificationMeans[] = [];
-  public definition: object = {};
+  public definition: MatrixFilterDefinition = {};
 
   public treeNode: MatrixFilterTreeNode = { 'taxonNuid': '' }
   public metaNode: MatrixFilterMetaNode = { 'name': '' }
 
   public space: MatrixFilterSpace[] = [];
   public position: number = 1;
-
-  // there should not be a default type.
-  //public type: MatrixFilterType = MatrixFilterType.TextOnlyFilter;
 
 
   constructor(init?: Partial<MatrixFilterType>) {
@@ -212,7 +233,8 @@ export enum IdentificationModes {
 export type IdentificationKeyReference = {
   uuid: string
   nodeType: NodeTypes
-  imageUrl: ImageUrls
+  imageUrl: ImageUrls,
+  licence: ImageLicence,
   space: Record<string, MatrixFilterSpaceReference[]>,
   maxPoints: number
   isVisible: boolean
@@ -222,6 +244,7 @@ export type IdentificationKeyReference = {
   templateContents: any[] // todo: missing type info
   slug: string
   description: string | null
+  morphotype?: string | null
 }
 
 export enum ResultActions {
@@ -320,7 +343,7 @@ export class IdentificationKey {
   public childrenCount: number = 0;
   public templateContents: any[] = [];
   public slug: string = '';
-  public overviewImage: ImageUrls | null = null;
+  public overviewImage: ImageUrls| null = null;
   public matrixFilters: Record<string, MatrixFilter> = {};
   public identificationMode: IdentificationModes = IdentificationModes.strict;
   public description: string = '';

@@ -5,7 +5,7 @@ import { TemporalJson } from "../types/DateTime";
 import { GeoJSONFeature } from "../types/GeoJSON";
 import { LocalcosmosPublicUser } from "./PublicUser";
 import { ObservationFormReference } from "./ObservationForm";
-import { ImageUrls } from "../types/Image";
+import { ImageUrls, ImageWithTextAndLicence } from "../types/Image";
 import { Taxon } from "../Taxon";
 
 export type DatasetValue = string | number | object | TemporalJson | File // todo add GeoJson Value + other object types specifically
@@ -80,7 +80,7 @@ export type DatasetListEntry = {
   user: LocalcosmosPublicUser | null,
   uuid: string,
   validationStep: string,
-  image: ImageUrls,
+  image: ImageWithTextAndLicence,
 }
 
 export type DatasetListResponse = {

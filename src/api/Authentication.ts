@@ -1,4 +1,4 @@
-import { ImageUrls } from "../types/Image";
+import { ImageWithTextAndLicence } from "../types/Image";
 
 export interface LocalcosmosUser {
   id: number,
@@ -16,7 +16,7 @@ export interface LocalcosmosUser {
    * @format email
    */
   email: string;
-  profilePicture: ImageUrls;
+  profilePicture: ImageWithTextAndLicence;
 }
 
 export interface Registration {

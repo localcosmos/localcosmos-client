@@ -2,12 +2,12 @@
  * This type describes the file /localcosmos/features/Glossary/{uuid}/{language_code}/glossary.json
  */
 import { FeatureBase } from "../types/Features";
-import { ImageUrls } from "../types/Image";
+import { ImageWithTextAndLicence } from "../types/Image";
 
 export type GlossaryEntry = {
   definition: string,
   synonyms: string[],
-  imageUrl: ImageUrls,
+  imageUrl: ImageWithTextAndLicence,
 }
 
 /**

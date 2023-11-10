@@ -10,7 +10,7 @@ import {
   VernacularSearchTaxon,
   TaxonScientificName
 } from './BackboneTaxonomy';
-import { ImageUrls } from '../types/Image';
+import { ImageWithTextAndLicence } from '../types/Image';
 import { MatrixFilter } from './NatureGuide';
 import { GenericFormReference } from './GenericForm';
 
@@ -18,9 +18,9 @@ import { GenericFormReference } from './GenericForm';
 export type VernacularNamesDict = Record<string,string>
 
 export type TaxonImageSet = {
-  taxonProfileImages: ImageUrls[],
-  nodeImages: ImageUrls[],
-  taxonImages: ImageUrls[],
+  taxonProfileImages: ImageWithTextAndLicence[],
+  nodeImages: ImageWithTextAndLicence[],
+  taxonImages: ImageWithTextAndLicence[],
 }
 
 export type TaxonProfileReference = TaxonType & {
@@ -94,7 +94,7 @@ export type TaxonProfile = TaxonType & {
   texts: TaxonText[],
   images: TaxonImageSet,
   synonyms: TaxonScientificName[],
-  gbifNubKey?: string,
+  gbifNubKey?: number,
   genericForms?: GenericFormReference[],
   templateContents?: object[],
   tags: string[],
@@ -106,6 +106,7 @@ export type TaxonProfile = TaxonType & {
 export class TaxonProfiles {
 
   registry: TaxonProfilesRegistry = {}
+  localizedRegistry: VernacularSearchTaxon[] = [];
 
   constructor (private taxonProfilesFeature: TaxonProfilesFeature) {}
 
@@ -114,10 +115,117 @@ export class TaxonProfiles {
     this.registry = await response.json();
   }
 
+  async loadLocalizedRegistry (languageCode: string) {
+    const response = await fetch(this.taxonProfilesFeature.localizedRegistries[languageCode]);
+    if (response.ok) {
+      this.localizedRegistry = await response.json();
+    }
+  }
+
   getRegisteredTaxon (nameUuid: string): TaxonProfileReference | null {
     if (nameUuid in this.registry) {
       return this.registry[nameUuid];
     }
     return null;
   }
+
+  async getTaxonProfile (nameUuid: string): Promise<TaxonProfile | null> {
+    if (nameUuid in this.registry) {
+      const taxon = this.registry[nameUuid];
+      const taxonProfilePath = `${this.taxonProfilesFeature.files}/${taxon.taxonSource}/${taxon.nameUuid}.json`;
+      const response = await fetch(taxonProfilePath);
+      if (response.ok) {
+        const taxonProfile = await response.json() as TaxonProfile;
+        return taxonProfile;
+      }
+    }
+
+    return null;
+  }
+
+  getRelatedTaxonProfiles (taxon: TaxonType, limit?: number, minNuidLength?: number): TaxonProfileReference[] {
+    const max = limit || 4;
+    minNuidLength = minNuidLength || 9;
+
+    const picks: TaxonProfileReference[] = [];
+    const includedNameUuids: string[] = [];
+
+    let nuid = taxon.taxonNuid.slice(0, -3);
+
+    while (picks.length < max && nuid && nuid.length > minNuidLength) {
+
+      Object.values(this.registry).every((taxonProfile) => {
+        if (taxonProfile.taxonNuid.startsWith(nuid) && !includedNameUuids.includes(taxonProfile.nameUuid) && taxonProfile.nameUuid !== taxon.nameUuid) {
+          picks.push(taxonProfile);
+          includedNameUuids.push(taxonProfile.nameUuid);
+        }
+
+        if (picks.length < max) {
+          return true;
+        }
+        return false;
+
+      });
+      
+      nuid = nuid.slice(0, -3);
+
+      if (nuid.length < minNuidLength) {
+        break;
+      }
+      
+    }
+
+    return picks;
+  }
+
+  getRandomTaxonProfiles (limit?: number, noLatnames?: boolean): VernacularSearchTaxon[] {
+    limit = limit || 4;
+
+    const picks: VernacularSearchTaxon[] = [];
+      
+    const min = 0;
+    const max = this.localizedRegistry.length - 1;
+
+    while (picks.length < limit) {
+      const index = Math.floor(Math.random() * (max - min + 1) + min);
+      const candidate: VernacularSearchTaxon = this.localizedRegistry[index];
+      if (candidate.imageUrl) {
+        if (noLatnames === true && candidate.name !== candidate.taxonLatname){
+          picks.push(candidate);
+        } else if (noLatnames !== true) {
+          picks.push(candidate);
+        }
+        
+      }
+    }
+    return picks;
+
+  }
+
+  search (searchText: string, limit?: number): VernacularSearchTaxon[] {
+    searchText = searchText.toLowerCase();
+    const matches: VernacularSearchTaxon[] = [];
+    const foundNameUuids: string[] = [];
+
+    this.localizedRegistry.every((taxonProfile) => {
+
+      const latnameLower = taxonProfile.taxonLatname.toLowerCase();
+      const nameLower = taxonProfile.name.toLowerCase();
+
+      if ( ( latnameLower.startsWith(searchText) || nameLower.includes(searchText) ) && !foundNameUuids.includes(taxonProfile.nameUuid)) {
+        matches.push(taxonProfile)
+        foundNameUuids.push(taxonProfile.nameUuid)
+      }
+
+      if (limit && matches.length >= limit) {
+        return false;
+      }
+
+      return true;
+
+    });
+
+    return matches;
+  }
+
 }
