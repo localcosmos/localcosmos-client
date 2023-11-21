@@ -79,6 +79,7 @@ export type MatrixFilterDefinition = {
   step?: null | number,
   unit?: string,
   unitVerbose?: string,
+  tolerance?: number,
 }
 
 // the defaults of Matrixfilter are just BS
@@ -158,8 +159,17 @@ export class RangeFilter extends MatrixFilter {
         const filter = identificationKey.children[nodeIndex].space[this.uuid];
         if (filter) {
           return filter.find((spaceRef: MatrixFilterSpaceReference) => {
-            return (this.encodedSpace[0] >= spaceRef.encodedSpace[0]) &&
-              (this.encodedSpace[0] <= spaceRef.encodedSpace[1]);
+
+            let upperLimit = spaceRef.encodedSpace[1];
+            let lowerLimit = spaceRef.encodedSpace[0];
+            
+            if (this.definition.tolerance) {
+              upperLimit = upperLimit + (upperLimit * ( this.definition.tolerance / 100));
+              lowerLimit = lowerLimit - (lowerLimit * ( this.definition.tolerance / 100));
+            }
+
+            return (this.encodedSpace[0] >= lowerLimit) &&
+              (this.encodedSpace[0] <= upperLimit);
           })
             ? 1
             : 0;

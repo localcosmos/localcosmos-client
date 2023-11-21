@@ -383,7 +383,7 @@ export class LocalCosmosApi {
     return this.performFetch(url, options);
   }
 
-  async getUserDatasetList(clientId: string, token?: string): Promise<LCApiRequestResult> {
+  async getUserDatasetList(clientId: string, token?: string, limit?: number, offset?: number): Promise<LCApiRequestResult> {
 
     let url = this.getUrl(`/dataset/`);
     let options = {
@@ -396,6 +396,22 @@ export class LocalCosmosApi {
     }
     else {
       url = `${url}?client_id=${clientId}`;
+    }
+
+    if (limit){
+      let connector = '?';
+      if (url.indexOf('?') >=0 ) {
+        connector = '&';
+      }
+      url = `${url}${connector}limit=${limit}`;
+    }
+
+    if (offset) {
+      let connector = '?';
+      if (url.indexOf('?') >=0 ) {
+        connector = '&';
+      }
+      url = `${url}${connector}offset=${offset}`;
     }
 
     return this.performFetch(url, options);
