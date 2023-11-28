@@ -152,9 +152,10 @@ export class TaxonProfiles {
 
     let nuid = taxon.taxonNuid.slice(0, -3);
 
-    while (picks.length < max && nuid && nuid.length > minNuidLength) {
+    while (picks.length < max && nuid) {
 
       Object.values(this.registry).every((taxonProfile) => {
+
         if (taxonProfile.taxonNuid.startsWith(nuid) && !includedNameUuids.includes(taxonProfile.nameUuid) && taxonProfile.nameUuid !== taxon.nameUuid) {
           picks.push(taxonProfile);
           includedNameUuids.push(taxonProfile.nameUuid);
