@@ -46,14 +46,19 @@ export type {
 } from './features/BackboneTaxonomy';
 export type { TemporalJson } from './types/DateTime';
 export type { GeoJSONFeature } from './types/GeoJSON';
-export type { Dataset,
+export type {
+  Dataset,
   ReadOnlyDataset,
   DatasetReadOnlyImage,
   DatasetFilter,
   DatasetFilterRequest
 } from './api/Dataset';
 export type { MapTaxonomicFilter, MapObservationFormFilter } from './features/Map';
-export type { TaxonProfile, TaxonText } from './features/TaxonProfiles';
+export type {
+  TaxonProfile,
+  TaxonProfilesSearchIndex,
+  TaxonText,
+} from './features/TaxonProfiles';
 export type { GlossaryEntry } from './features/Glossary';
 export type {
   IdentificationKeyReference,
@@ -63,7 +68,12 @@ export type {
   TaxonFilterSpace,
   MatrixFilterDefinition,
 } from './features/NatureGuide';
-
+export type {
+  Page,
+  TemplateContentNavigationEntry,
+  TemplateContentComponent,
+  LicencedTemplateContentImage,
+} from './features/TemplateContent';
 /**
  * Usable classes, functions and enums of components
  */
@@ -87,6 +97,7 @@ export {
   NodeTypes,
   ResultActions,
 } from './features/NatureGuide';
+export { ComponentTypes } from './features/TemplateContent'
 
 export { MapTypes } from './features/Map';
 

@@ -72,7 +72,13 @@ export type NatureGuideFeature = Feature & {
   imageUrl: ImageUrls,
 }
 
+export type TemplateContentSlug = {
+  path: string
+  templateName: string
+}
+
 export type TemplateContentFeature = ListFeature & {
+  slugs: Record<string, TemplateContentSlug>,
   assignments: {
     string: Record<string,string>
   },

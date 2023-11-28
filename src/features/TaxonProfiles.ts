@@ -182,6 +182,7 @@ export class TaxonProfiles {
     limit = limit || 4;
 
     const picks: VernacularSearchTaxon[] = [];
+    const pickedUuids: string[] = [];
       
     const min = 0;
     const max = this.localizedRegistry.length - 1;
@@ -189,11 +190,13 @@ export class TaxonProfiles {
     while (picks.length < limit) {
       const index = Math.floor(Math.random() * (max - min + 1) + min);
       const candidate: VernacularSearchTaxon = this.localizedRegistry[index];
-      if (candidate.imageUrl) {
+      if (candidate.imageUrl && pickedUuids.indexOf(candidate.nameUuid) === -1) {     
         if (noLatnames === true && candidate.name !== candidate.taxonLatname){
           picks.push(candidate);
+          pickedUuids.push(candidate.nameUuid);
         } else if (noLatnames !== true) {
           picks.push(candidate);
+          pickedUuids.push(candidate.nameUuid);
         }
         
       }
