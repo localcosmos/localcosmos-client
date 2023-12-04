@@ -10,6 +10,8 @@ import type { GenericForm } from '../features/GenericForm';
 import type { Dataset, DatasetCreateRequest, DatasetFilterRequest, Operators } from './Dataset';
 import type { ObservationFormCreateRequest } from './ObservationForm';
 
+import type { CreateLogEntryRequest } from '../types/Analytics';
+
 export enum LCApiResultTypes {
   error = 'error',
   success = 'success',
@@ -542,6 +544,49 @@ export class LocalCosmosApi {
     }
     
     const url = this.getUrl(`/dataset/${datasetUuid}/image/${imageId}/`);
+
+    return this.performFetch(url, options);
+  }
+
+  /** analytics */
+  async createLogEntry(eventType: string, eventContent?:string, platform?:string, appVersion?:string): Promise<LCApiRequestResult> {
+    const body: CreateLogEntryRequest = {
+      eventType: eventType,
+    };
+
+    if (eventContent) {
+      body.eventContent = eventContent;
+    }
+    if (platform) {
+      body.platform = platform;
+    }
+    if (appVersion) {
+      body.appVersion = appVersion;
+    }
+
+    const options = {
+      method: 'POST',
+      headers: this.getHeaders(ContentTypes.json),
+      body: JSON.stringify(body),
+    };
+
+    const url = this.getUrl(`/anonymous-log-entry/`);
+
+    return this.performFetch(url, options);
+
+  }
+
+  async getEventCount(eventType: string, eventContent?:string): Promise<LCApiRequestResult> {
+    let url = this.getUrl(`/anonymous-log/get-event-count/`);
+    url = `${url}?event-type=${eventType}`;
+    if (eventContent) {
+      url = `${url}&event-content=${eventContent}`;
+    }
+
+    const options = {
+      method: 'GET',
+      headers: this.getHeaders(ContentTypes.json),
+    };
 
     return this.performFetch(url, options);
   }

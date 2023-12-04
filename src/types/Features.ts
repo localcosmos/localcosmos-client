@@ -90,6 +90,14 @@ export type NatureGuideListFeature = {
   lookup: Record<string, string>,
 }
 
+export type LocalizedGlossaries = {
+  usedTerms: string,
+  allTerms: string,
+}
+export type GlossaryFeature = Feature & {
+  localized: Record<string, LocalizedGlossaries>
+}
+
 export interface Features {
   slugs: Record<string, string>,
   Frontend: Feature,
@@ -99,5 +107,5 @@ export interface Features {
   GenericForm?: GenericFormListFeature,
   Map?: Feature,
   TemplateContent?: TemplateContentFeature,
-  Glossary?: Feature,
+  Glossary?: GlossaryFeature,
 }

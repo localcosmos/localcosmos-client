@@ -42,6 +42,7 @@ export type TemplateContentNavigationEntry = {
   url: string
   children: TemplateContentNavigationEntry[]
   linkName: string
+  link_name: string
 }
 
 export type LicencedTemplateContentImage = {

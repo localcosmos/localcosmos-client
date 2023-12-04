@@ -20,7 +20,8 @@ export type { FrontendSettings } from './types/Settings';
   GenericFormFeature,
   GenericFormListFeature,
   TemplateContentFeature,
-  TaxonProfilesFeature
+  TaxonProfilesFeature,
+  GlossaryFeature,
 } from './types/Features';
 
 export { FeatureType } from './types/Features';
