@@ -102,6 +102,8 @@ export { ComponentTypes } from './features/TemplateContent'
 
 export { MapTypes } from './features/Map';
 
+export { LicenceRegistry } from './legal/LicenceRegistry';
+
 /**
  * Definitions for Api Requests and Responses
  */
