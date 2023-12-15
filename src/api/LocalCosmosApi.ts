@@ -591,4 +591,16 @@ export class LocalCosmosApi {
     return this.performFetch(url, options);
   }
 
+  /** public user */
+  async getUserProfile(uuid: string): Promise<LCApiRequestResult> {
+    const options = {
+      method: 'GET',
+      headers: this.getHeaders(ContentTypes.json),
+    };
+
+    const url = this.getUrl(`/user-profile/${uuid}/`);
+
+    return this.performFetch(url, options);
+  }
+
 }

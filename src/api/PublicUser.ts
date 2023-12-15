@@ -6,4 +6,6 @@ export type LocalcosmosPublicUser = {
   firstName?: string,
   lastName?: string,
   profilePicture?: ProfilePicture,
+  dateJoined: string,
+  datasetCount: number,
 }
