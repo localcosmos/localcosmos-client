@@ -9,6 +9,7 @@ import type { CropParameters } from './ProfilePicture';
 import type { GenericForm } from '../features/GenericForm';
 import type { Dataset, DatasetCreateRequest, DatasetFilterRequest, Operators } from './Dataset';
 import type { ObservationFormCreateRequest } from './ObservationForm';
+import type { ContactUserReqest } from './ContactUser';
 
 import type { CreateLogEntryRequest } from '../types/Analytics';
 
@@ -599,6 +600,26 @@ export class LocalCosmosApi {
     };
 
     const url = this.getUrl(`/user-profile/${uuid}/`);
+
+    return this.performFetch(url, options);
+  }
+
+  async sendUserMessage(uuid:string, subject:string, message:string, token: string): Promise<LCApiRequestResult> {
+
+    const headers = this.getAuthedHeaders(token, ContentTypes.json);
+
+    const body:ContactUserReqest = {
+      "subject": subject,
+      "message": message
+    };
+
+    const options = {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(body)
+    };
+
+    const url = this.getUrl(`/contact-user/${uuid}/`);
 
     return this.performFetch(url, options);
   }

@@ -156,7 +156,7 @@ export class TaxonProfiles {
 
       Object.values(this.registry).every((taxonProfile) => {
 
-        if (taxonProfile.taxonNuid.startsWith(nuid) && !includedNameUuids.includes(taxonProfile.nameUuid) && taxonProfile.nameUuid !== taxon.nameUuid) {
+        if (taxonProfile.taxonSource === taxon.taxonSource && taxonProfile.taxonNuid.startsWith(nuid) && !includedNameUuids.includes(taxonProfile.nameUuid) && taxonProfile.nameUuid !== taxon.nameUuid) {
           picks.push(taxonProfile);
           includedNameUuids.push(taxonProfile.nameUuid);
         }
