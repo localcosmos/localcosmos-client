@@ -624,4 +624,12 @@ export class LocalCosmosApi {
     return this.performFetch(url, options);
   }
 
+  /** template content */
+  //async getTemplateContent (): Promise<LCApiRequestResult> {
+
+  //}
+
+  //async getTemplateContentPreview (): Promise<LCApiRequestResult> {
+
+  //}
 }

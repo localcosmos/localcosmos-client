@@ -100,6 +100,14 @@ export type TaxonProfile = TaxonType & {
   tags: string[],
 }
 
+
+export type TaxonLatnameSearchIndex = Record<string, LatnameSearchTaxon>
+export type VernacularSearchIndex = Record<string, VernacularSearchTaxon>
+
+export type SearchIndex = {
+  taxonLatname: TaxonLatnameSearchIndex,
+  vernacular: Record<string, VernacularSearchIndex>,
+}
 /**
  * a usable class to query taxonomic profiles
  */
@@ -107,6 +115,10 @@ export class TaxonProfiles {
 
   registry: TaxonProfilesRegistry = {}
   localizedRegistry: VernacularSearchTaxon[] = [];
+  searchIndex: SearchIndex = {
+    taxonLatname: {},
+    vernacular: {}
+  };
 
   constructor (private taxonProfilesFeature: TaxonProfilesFeature) {}
 
@@ -219,6 +231,38 @@ export class TaxonProfiles {
       if ( ( latnameLower.startsWith(searchText) || nameLower.includes(searchText) ) && !foundNameUuids.includes(taxonProfile.nameUuid)) {
         matches.push(taxonProfile)
         foundNameUuids.push(taxonProfile.nameUuid)
+      }
+
+      if (limit && matches.length >= limit) {
+        return false;
+      }
+
+      return true;
+
+    });
+
+    return matches;
+  }
+
+  searchVernacular (searchText: string, limit?: number | null, startsWithOnly?: boolean ): VernacularSearchTaxon[] {
+    searchText = searchText.toLowerCase();
+    const matches: VernacularSearchTaxon[] = [];
+    const foundNameUuids: string[] = [];
+
+    this.localizedRegistry.every((taxonProfile) => {
+
+      const nameLower = taxonProfile.name.toLowerCase();
+
+      if (startsWithOnly === true) {
+        if ( nameLower.startsWith(searchText) && !foundNameUuids.includes(taxonProfile.nameUuid)) {
+          matches.push(taxonProfile)
+          foundNameUuids.push(taxonProfile.nameUuid)
+        }
+      } else {
+        if ( nameLower.includes(searchText) && !foundNameUuids.includes(taxonProfile.nameUuid)) {
+          matches.push(taxonProfile)
+          foundNameUuids.push(taxonProfile.nameUuid)
+        }
       }
 
       if (limit && matches.length >= limit) {
