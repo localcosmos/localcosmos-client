@@ -625,11 +625,47 @@ export class LocalCosmosApi {
   }
 
   /** template content */
-  //async getTemplateContent (): Promise<LCApiRequestResult> {
+  async getTemplateContent (slug:string): Promise<LCApiRequestResult> {
+    const url = this.getUrl(`/template-content/${slug}/`);
 
-  //}
+    const options = {
+      method: 'GET',
+      headers: this.getHeaders(ContentTypes.json),
+    };
 
-  //async getTemplateContentPreview (): Promise<LCApiRequestResult> {
+    return this.performFetch(url, options);
+  }
 
-  //}
+  async getTemplateContentPreview (slug:string): Promise<LCApiRequestResult> {
+    const url = this.getUrl(`/template-content-preview/${slug}/`);
+
+    const options = {
+      method: 'GET',
+      headers: this.getHeaders(ContentTypes.json),
+    };
+
+    return this.performFetch(url, options);
+  }
+
+  async getTemplateContentNavigation (navigationType:string, language:string) : Promise<LCApiRequestResult> {
+    const url = this.getUrl(`/template-content-navigation/${navigationType}/${language}/`);
+
+    const options = {
+      method: 'GET',
+      headers: this.getHeaders(ContentTypes.json),
+    };
+
+    return this.performFetch(url, options);
+  }
+
+  async getTemplateContentNavigationPreview (navigationType:string, language:string) : Promise<LCApiRequestResult> {
+    const url = this.getUrl(`/template-content-navigation-preview/${navigationType}/${language}/`);
+
+    const options = {
+      method: 'GET',
+      headers: this.getHeaders(ContentTypes.json),
+    };
+
+    return this.performFetch(url, options);
+  }
 }

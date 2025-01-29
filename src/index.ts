@@ -38,9 +38,10 @@ export type { Map } from './features/Map';
 export type { GenericFormField, WidgetAttrs } from './features/GenericForm';
 export type {
   VernacularNamesLookup,
-  VernacularNamesList,
-  VernacularSearchTaxon,
+  SearchTaxonList,
+  SearchTaxon,
   TaxonType,
+  TaxonWithImage,
   VernacularTaxonType,
   TaxonomicRestriction,
   RestrictionType
@@ -59,6 +60,8 @@ export type {
   TaxonProfile,
   TaxonProfilesSearchIndex,
   TaxonText,
+  TaxonProfilesNavigation,
+  TaxonProfilesNavigationNode,
 } from './features/TaxonProfiles';
 export type { GlossaryEntry } from './features/Glossary';
 export type {
@@ -72,6 +75,7 @@ export type {
 export type {
   Page,
   TemplateContentNavigationEntry,
+  TemplateContentNavigation,
   TemplateContentComponent,
   LicencedTemplateContentImage,
 } from './features/TemplateContent';

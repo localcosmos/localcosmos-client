@@ -44,6 +44,10 @@ export type BackboneTaxonomyFeature = Feature & {
     [locale: string]: string
   }
   alphabet: string,
+  slugs: string,
+  localizedSlugs: {
+    [locale: string]: string
+  },
 }
 
 
@@ -59,11 +63,17 @@ export type GenericFormListFeature = {
 
 export type TaxonProfilesFeature = Feature & {
   files: string,
+  localizedFiles : {
+    [locale: string]: string,
+  },
   localizedRegistries: {
     [locale: string]: string,
   },
   registry: string,
   search: string,
+  navigation: string,
+  lookup: Record<string, string>,
+  featuredProfiles: string,
 }
 
 export type NatureGuideFeature = Feature & {
@@ -80,9 +90,9 @@ export type TemplateContentSlug = {
 export type TemplateContentFeature = ListFeature & {
   slugs: Record<string, TemplateContentSlug>,
   assignments: {
-    string: Record<string,string>
+    string: Record<string, Record<string, string>>
   },
-  navigations: Record<string, any>
+  navigations: Record<string, Record<string, string>>
 }
 
 export type NatureGuideListFeature = {

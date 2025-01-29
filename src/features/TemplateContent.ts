@@ -16,6 +16,11 @@ export enum ComponentTypes {
   templateContentLink = 'templateContentLink',
 }
 
+export enum TemplateType {
+  page = 'page',
+  feature = 'feature',
+}
+
 export type ComponentContent = {
   type: ComponentTypes
   required?: boolean
@@ -42,8 +47,10 @@ export type TemplateContentNavigationEntry = {
   url: string
   children: TemplateContentNavigationEntry[]
   linkName: string
-  link_name: string
+  link_name: string /** should be deprecated in the future */
 }
+
+export type TemplateContentNavigation = TemplateContentNavigationEntry[]; 
 
 export type LicencedTemplateContentImage = {
   image : {
