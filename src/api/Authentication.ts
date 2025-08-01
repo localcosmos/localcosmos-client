@@ -19,6 +19,17 @@ export interface LocalcosmosUser {
   profilePicture: ImageWithTextAndLicence;
 }
 
+export interface LocalcosmosUserUpdateData {
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+  /**
+   * Email address
+   * @format email
+   */
+  email?: string;
+}
+
 export interface Registration {
   /**
    * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.

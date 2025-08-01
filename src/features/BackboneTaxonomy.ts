@@ -42,11 +42,13 @@ export type BackboneTaxon = TaxonType & {
 export type TaxonWithImage = TaxonType & {
   gbifNubKey?: number,
   image: ImageWithTextAndLicence,
+  shortProfile: string,
 }
 
 export type TaxonWithImages = TaxonType & {
   gbifNubKey?: number,
   images: ImageWithTextAndLicence[],
+  primaryImage: ImageWithTextAndLicence | null,
 }
 
 export type TaxonWithSlugsAndImages = TaxonWithImages & {
@@ -85,71 +87,88 @@ export type TaxonLatnamesList = BackboneTaxon[];
 
 export class BackboneTaxonomy {
 
-  currentLanguage: string | null;
-  loadedLanguageCode: string | null = null
-  vernacularNamesForSearch: SearchTaxonList = []
+  currentLanguage: string
+  
   vernacularNamesLookup: VernacularNamesLookup = {}
 
-  currentStartLetters: string | null = null
+  private currentLatnameStartLetter: string | null = null;
+  private currentVernacularStartLetter: string | null = null;
+
   currentLatnamesForSearch:  TaxonLatnamesList = []
+
+  currentVernacularNamesForSearch: SearchTaxonList = []
 
   slugs: Record<string, string> = {}
   localizedSlugs: Record<string, string> = {}
 
   maxResults: number = 10;
 
-  constructor(private backboneTaxonomyFeature: BackboneTaxonomyFeature) {
-    this.currentLanguage = null;
+  constructor(private backboneTaxonomyFeature: BackboneTaxonomyFeature, languageCode: string) {
+    this.currentLanguage = languageCode;
   }
 
-  async loadLanguage(languageCode:string) {
-    await this.loadVernacularFiles(languageCode);
-    this.loadedLanguageCode = languageCode;
+  setLanguage(languageCode: string) {
+    this.currentLanguage = languageCode;
   }
 
-  async loadLatnameFile(startLetters: string) {
-    const latnamesPath = `${this.backboneTaxonomyFeature.alphabet}/${startLetters}.json`;
-    const response = await fetch(latnamesPath);
-    if (response.ok) {
-      try {
-        this.currentLatnamesForSearch = await response.json();
+  async loadLatnameFile(startLetter: string) {
+    const latnamesPath = `${this.backboneTaxonomyFeature.search.taxonLatname}/${startLetter}.json`;
+    try {
+      const response = await fetch(latnamesPath);
+      if (response.ok) {
+        try {
+          this.currentLatnamesForSearch = await response.json();
+          this.currentLatnameStartLetter = startLetter; // Track latname start letter
+        }
+        catch (e) {
+          console.log(e);
+        }
+      } else {
+        this.currentLatnamesForSearch = [];
       }
-      catch (e) {
-        console.log(e);
-      }
-    } else {
+    } catch (e) {
+      console.error(`Error loading latnames from ${latnamesPath}:`, e);
       this.currentLatnamesForSearch = [];
     }
   }
 
-  async loadVernacularFiles(languageCode: string) {
-    if (this.loadedLanguageCode !== languageCode) {
-      this.vernacularNamesForSearch = [];
+  async loadVernacularFiles(startLetter: string) {
+
+    this.currentVernacularStartLetter = startLetter; // Track vernacular start letter
+
+    if (this.currentLanguage in this.backboneTaxonomyFeature.search.vernacular) {
+
+      const vernacularNamesPath = `${this.backboneTaxonomyFeature.search.vernacular[this.currentLanguage]}/${startLetter}.json`;
+      try {
+        const searchFileResponse = await fetch(vernacularNamesPath);
+        if (searchFileResponse.ok) {
+          try {
+            this.currentVernacularNamesForSearch = await searchFileResponse.json();
+          }
+          catch (e) {
+            console.log(e);
+          }
+        } else {
+          this.currentVernacularNamesForSearch = [];
+        }
+        if (this.currentLanguage in this.backboneTaxonomyFeature.lookup.vernacular) {
+          const vernacularLookupPath = this.backboneTaxonomyFeature.lookup.vernacular[this.currentLanguage];
+          const response = await fetch(vernacularLookupPath);
+          if (response.ok) {
+            this.vernacularNamesLookup = await response.json();
+          }
+          else {
+            throw new Error(`Invalid BackboneTaxonomy vernacular path ${vernacularLookupPath}`);
+          }
+        }
+      } catch (e) {
+        console.error(`Error loading vernacular names from ${vernacularNamesPath}:`, e);
+        this.currentVernacularNamesForSearch = [];
+      }
+    } else {
+      this.currentVernacularNamesForSearch = [];
       this.vernacularNamesLookup = {};
-      this.loadedLanguageCode = null;
-
-      if (languageCode in this.backboneTaxonomyFeature.vernacular) {
-        const vernacularPath = this.backboneTaxonomyFeature.vernacular[languageCode];
-        const response = await fetch(vernacularPath);
-        if (response.ok) {
-          this.vernacularNamesForSearch = await response.json();
-        }
-        else {
-          throw new Error(`Invalid BackboneTaxonomy vernacular path ${vernacularPath}`);
-        }
-      }
-
-      if (languageCode in this.backboneTaxonomyFeature.vernacularLookup) {
-        
-        const vernacularLookupPath = this.backboneTaxonomyFeature.vernacularLookup[languageCode];
-        const response = await fetch(vernacularLookupPath);
-        if (response.ok) {
-          this.vernacularNamesLookup = await response.json();
-        }
-        else {
-          throw new Error(`Invalid BackboneTaxonomy vernacular path ${vernacularLookupPath}`);
-        }
-      }
+      console.warn(`No vernacular names available for language ${this.currentLanguage} in BackboneTaxonomy feature ${this.backboneTaxonomyFeature.uuid}`);
     }
   }
 
@@ -181,8 +200,8 @@ export class BackboneTaxonomy {
     let resultCount = 0;
 
     if (searchText.length >= 2) {
-      const startLetters = searchText.substring(0,2).toUpperCase();
-      if (startLetters != this.currentStartLetters) {
+      const startLetters = searchText.substring(0,1).toUpperCase();
+      if (startLetters !== this.currentLatnameStartLetter) { // Use specific tracking
         await this.loadLatnameFile(startLetters);
       }
     }
@@ -216,13 +235,19 @@ export class BackboneTaxonomy {
     return results;
   }
 
-  searchVernacularNames(searchText: string): SearchTaxonList {
+  async searchVernacularNames(searchText: string): Promise<SearchTaxonList> {
     searchText = searchText.toLowerCase();
 
     const results: SearchTaxon[] = [];
     let resultCount = 0;
 
-    this.vernacularNamesForSearch.every((vernacularTaxon) => {
+    if (searchText.length >= 2) {
+      const startLetter = searchText.substring(0,1).toUpperCase();
+      if (startLetter !== this.currentVernacularStartLetter) { // Use specific tracking
+        await this.loadVernacularFiles(startLetter);
+      }
+    }
+    this.currentVernacularNamesForSearch.every((vernacularTaxon) => {
 
       const vernacularName = vernacularTaxon.name.toLowerCase();
 
@@ -245,8 +270,7 @@ export class BackboneTaxonomy {
 
   async searchTaxon(searchText: string): Promise<SearchTaxonList> {
     const latnames = await this.searchLatnames(searchText);
-    const vernacularNames = this.searchVernacularNames(searchText);
-
+    const vernacularNames = await this.searchVernacularNames(searchText);
     const results = vernacularNames.concat(latnames);
     return results;
   }

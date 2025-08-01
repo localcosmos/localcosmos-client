@@ -1,236 +1,13 @@
-import { FeatureBase } from "../types/Features";
-import { TaxonType } from "./BackboneTaxonomy";
-import { ImageUrls, ImageLicence } from "../types/Image";
-// this should be replaced with something independant
-import { cloneDeep } from "lodash";
+import type { ImageUrls } from "../types/Image";
+import type { TaxonType } from "./BackboneTaxonomy";
+import type { FeatureBase } from "../types/Features";
 
-export type MatrixFilterSpaceReference = {
-  spaceIdentifier: string,
-  encodedSpace: any,
+export type ComponentLink = {
+  feature: string,
+  uuid: string,
 }
 
-export class MatrixFilterSpace {
-  public spaceIdentifier: string = '';
-  public encodedSpace: any = '';
-  public html?: string;
-  public points?: number = 0;
-
-  constructor(init?: Partial<MatrixFilterSpace>) {
-    Object.assign(this, init);
-  }
-}
-
-export type DescriptiveTextAndImagesFilterSpace = MatrixFilterSpace & {
-  imageUrl: ImageUrls,
-  licence: ImageLicence,
-  secondaryImageUrl: ImageUrls,
-  secondaryLicence: ImageLicence,
-}
-
-export enum ColorTypes {
-  single = 'single',
-  gradient = 'gradient',
-  triplet = 'triplet',
-}
-
-export type ColorFilterSpace = MatrixFilterSpace & {
-  gradient: boolean,
-  colorType: ColorTypes,
-  description: string,
-}
-export type TextOnlyFilterSpace = MatrixFilterSpace
-export type TaxonFilterSpace = MatrixFilterSpace
-
-export enum MatrixFilterType {
-  DescriptiveTextAndImagesFilter = 'DescriptiveTextAndImagesFilter',
-  TextOnlyFilter = 'TextOnlyFilter',
-  ColorFilter = 'ColorFilter',
-  RangeFilter = 'RangeFilter',
-  NumberFilter = 'NumberFilter',
-  TaxonFilter = 'TaxonFilter',
-}
-
-export enum IdentificationMeans {
-  visual = 'visual',
-  tactile = 'tactile',
-  auditory = 'auditory',
-  microscope = 'microscope',
-  scalpel = 'scalpel',
-  gustatory = 'gustatory',
-  olfactory = 'olfactory',
-}
-
-export interface MatrixFilterTreeNode {
-  taxonNuid: string
-}
-
-export interface MatrixFilterMetaNode {
-  name: string
-}
-
-type MatrixFilterRestriction = {
-  spaceIdentifier: string
-  encodedSpace: string
-}
-
-export type MatrixFilterDefinition = {
-  min?: null | number,
-  max?: null | number,
-  step?: null | number,
-  unit?: string,
-  unitVerbose?: string,
-  tolerance?: number,
-}
-
-// the defaults of Matrixfilter are just BS
-// this should be rewritten
-export class MatrixFilter {
-  public uuid: string = '';
-  public name: string = '';
-  // there should not be a default ype
-  public type: MatrixFilterType = MatrixFilterType.TextOnlyFilter;
-  public description?: string | null = '';
-
-  public weight: number = 1;
-  public allowMultipleValues: boolean = false;
-  public restrictions: Record<string, MatrixFilterRestriction[]> = {};
-  public isRestricted: boolean = false;
-  public idenficitationMeans: IdentificationMeans[] = [];
-  public definition: MatrixFilterDefinition = {};
-
-  public treeNode: MatrixFilterTreeNode = { 'taxonNuid': '' }
-  public metaNode: MatrixFilterMetaNode = { 'name': '' }
-
-  public space: MatrixFilterSpace[] = [];
-  public position: number = 1;
-
-
-  constructor(init?: Partial<MatrixFilterType>) {
-    Object.assign(this, init);
-  }
-
-  addSpace(space: MatrixFilterSpace) {
-    if (!this.space.find(s => s.spaceIdentifier === space.spaceIdentifier)) {
-      this.space.push(space);
-    }
-  }
-}
-
-export class RangeFilter extends MatrixFilter {
-
-  public type: MatrixFilterType = MatrixFilterType.RangeFilter;
-
-  public encodedSpace: number[] = [];
-
-  /**
-   * Range filters only contain a single filter:
-   *
-   * @param space
-   */
-  addSpace(space: MatrixFilterSpace) {
-    if (this.space.length >= 1) {
-      return;
-    }
-
-    space.spaceIdentifier = space.spaceIdentifier.split(':')[0];
-    this.space.push(space);
-  }
-
-  updateEncodedSpace(event: IdentificationEvents, identificationKey: IdentificationKey, payload: {}): void {
-    const { index, encodedSpace } = payload as { index: number, encodedSpace: number[] };
-    if (identificationKey.spaces[index].spaceIdentifier.slice(0, 36) !== this.uuid) {
-      return;
-    }
-
-    // update the internal encoded space and make sure the space becomes selectable
-    this.encodedSpace = encodedSpace;
-    identificationKey.selectedSpaces[index] = 0;
-    this.updateEncodedSpaceMapping(event, identificationKey, index);
-  }
-
-  updateEncodedSpaceMapping(_: IdentificationEvents, identificationKey: IdentificationKey, index: number): void {
-    if (identificationKey.spaces[index].spaceIdentifier.slice(0, 36) !== this.uuid) {
-      return;
-    }
-
-    let newMapping = (new Array(identificationKey.children.length).fill(1));
-    if (this.encodedSpace.length > 0) {
-      newMapping = newMapping.map((_, nodeIndex) => {
-        const filter = identificationKey.children[nodeIndex].space[this.uuid];
-        if (filter) {
-          return filter.find((spaceRef: MatrixFilterSpaceReference) => {
-
-            let upperLimit = spaceRef.encodedSpace[1];
-            let lowerLimit = spaceRef.encodedSpace[0];
-            
-            if (this.definition.tolerance) {
-              upperLimit = upperLimit + (upperLimit * ( this.definition.tolerance / 100));
-              lowerLimit = lowerLimit - (lowerLimit * ( this.definition.tolerance / 100));
-            }
-
-            return (this.encodedSpace[0] >= lowerLimit) &&
-              (this.encodedSpace[0] <= upperLimit);
-          })
-            ? 1
-            : 0;
-        }
-
-        return 0;
-      });
-    }
-
-    identificationKey.spaceNodeMapping[index] = newMapping;
-  }
-}
-
-export class DescriptiveTextAndImagesFilter extends MatrixFilter {
-  public type: MatrixFilterType = MatrixFilterType.DescriptiveTextAndImagesFilter;
-}
-
-export class ColorFilter extends MatrixFilter {
-  public type: MatrixFilterType = MatrixFilterType.ColorFilter;
-}
-
-export class NumberFilter extends MatrixFilter {
-  public type: MatrixFilterType = MatrixFilterType.NumberFilter;
-}
-
-export class TextOnlyFilter extends MatrixFilter {
-  public type: MatrixFilterType = MatrixFilterType.TextOnlyFilter;
-}
-
-export class TaxonFilter extends MatrixFilter {
-  public type: MatrixFilterType = MatrixFilterType.TaxonFilter;
-}
-
-export const MatrixFilterClassMap = {
-  DescriptiveTextAndImagesFilter,
-  ColorFilter,
-  RangeFilter,
-  NumberFilter,
-  TextOnlyFilter,
-  TaxonFilter,
-};
-
-export enum IdentificationEvents {
-  spaceInitialized = 'spaceInitialized',
-  beforeSpaceSelected = 'beforeSpaceSelected',
-  spaceSelected = 'spaceSelected',
-  spaceDeselected = 'spaceDeselected',
-  filterBecameVisible = 'filterBecameVisible',
-  filterBecameInvisible = 'filterBecameInvisible',
-
-  /**
-   * triggered when all possible choices are made
-   */
-  identificationKeyDone = 'identificationKeyDone',
-}
-
-export type IdentificationEventCallback = {
-  (eventType: string, identificationKey: IdentificationKey, ...payload: any): void;
-}
-
-export enum NodeTypes {
+export enum NodeType {
   node = 'node',
   result = 'result',
 }
@@ -240,269 +17,217 @@ export enum IdentificationModes {
   strict = 'strict',
 }
 
-export type IdentificationKeyReference = {
-  uuid: string
-  nodeType: NodeTypes
+export enum ColorTypes {
+  single = 'single',
+  gradient = 'gradient',
+  triplet = 'triplet',
+}
+
+export type MatrixFilterRestriction = {
+  spaceIdentifier: string
+  encodedSpace: string | [number, number]
+}
+
+export enum MatrixFilterTypes {
+  DescriptiveTextAndImagesFilter = 'DescriptiveTextAndImagesFilter',
+  RangeFilter = 'RangeFilter',
+  NumberFilter = 'NumberFilter',
+  TextOnlyFilter = 'TextOnlyFilter',
+  ColorFilter = 'ColorFilter',
+  TaxonFilter = 'TaxonFilter',
+}
+
+export enum NodeEvents {
+  NodeImpossible = 'NodeImpossible',
+  NodePossible = 'NodePossible',
+  NodePointsChanged = 'NodePointsChanged',
+}
+
+export enum SpaceEvents {
+  SpaceSelected = 'SpaceSelected',
+  SpaceDeselected = 'SpaceDeselected',
+  SpacePossible = 'SpacePossible',
+  SpaceImpossible = 'SpaceImpossible',
+}
+
+export enum MatrixFilterEvents {
+  MatrixFilterBecameVisible = 'MatrixFilterBecameVisible',
+  MatrixFilterBecameInvisible = 'MatrixFilterBecameInvisible',
+}
+
+export enum IdentificationStepEvents {
+  IdentificationStepDone = 'IdentificationStepDone',
+  IdentificationResultChanged = 'IdentificationResultChanged',
+}
+
+export type MatrixFilterSpaceData = {
+  spaceIdentifier: string,
+}
+
+export type DescriptiveTextAndImagesFilterSpaceData = MatrixFilterSpaceData & {
+  encodedSpace: string,
   imageUrl: ImageUrls,
-  licence: ImageLicence,
-  space: Record<string, MatrixFilterSpaceReference[]>,
-  maxPoints: number
-  isVisible: boolean
-  name: string
-  decisionRule: string
-  taxon: TaxonType | null
-  templateContents: any[] // todo: missing type info
-  slug: string
-  description: string | null
-  morphotype?: string | null
+  secondaryImageUrl: ImageUrls,
 }
 
-export enum ResultActions {
-  TaxonProfiles = 'TaxonProfiles',
-  GenericForm = 'GenericForm',
+export type RangeFilterSpaceData = MatrixFilterSpaceData & {
+  encodedSpace: [number, number],
 }
 
-export type ResultAction = {
-  feature: ResultActions,
+export type NumberFilterSpaceData = MatrixFilterSpaceData & {
+  encodedSpace: number,
+}
+
+export type TextOnlyFilterSpaceData = MatrixFilterSpaceData & {
+  encodedSpace: string,
+}
+
+export type TaxonFilterSpaceData = MatrixFilterSpaceData & {
+  encodedSpace: string,
+  shortName: string,
+  latname: string,
+  isCustom: boolean,
+}
+
+export type ColorFilterSpaceData = MatrixFilterSpaceData & {
+  encodedSpace: number[],
+  html: string,
+  gradient: boolean,
+  colorType: ColorTypes,
+  desciption: string|null,
+}
+
+export type MatrixFilterSpaceDataTypes = DescriptiveTextAndImagesFilterSpaceData | RangeFilterSpaceData | NumberFilterSpaceData | TextOnlyFilterSpaceData | ColorFilterSpaceData | TaxonFilterSpaceData;
+
+export type MatrixFilterData = {
   uuid: string,
+  name: string,
+  type: MatrixFilterTypes,
+  position: number,
+  description: string|null,
+  weight: number,
+  restrictions: Record<string, MatrixFilterRestriction[]>,
+  isRestricted: boolean,
+  allowMultipleValues: boolean,
+  identificationMeans: string|null,
+  definition: null | RangeFilterDefinition,
+  treeNode: {
+    taxonNuid: string,
+  },
+  metaNode: {
+    name: string,
+  },
 }
 
-export type NatureGuideOptions = {
-  resultAction: ResultAction
+export type DescriptiveTextAndImagesFilterData = MatrixFilterData & {
+  space: DescriptiveTextAndImagesFilterSpaceData[],
 }
 
-export class NatureGuide implements FeatureBase {
-  public name = '';
-  public slug = '';
-  public uuid = '';
-  public options: NatureGuideOptions | null = null;
-  public globalOptions = {};
-  public version: number = 1;
-
-  public crossLinks: any = null;
-  public isMulticontent: boolean = false;
-  public slugs: Record<string, string> = {};
-  public startNodeUuid: string = '';
-
-  // the tree in json format. this means any object in here is not instantiated:
-  // typing is almost identical to the IdentificationKey type without methods and cross-references
-  public tree: Record<string, object> = {};
-
-  constructor(init?: Partial<NatureGuide>) {
-    Object.assign(this, init);
-  }
-
-  getIdentificationKey(uuid: string): IdentificationKey | null {
-    if (!this.tree[uuid]) {
-      return null;
-    }
-
-    // instantiating an identification key with the json data:
-    const json = cloneDeep(this.tree[uuid]);
-    const filters = { ...json.matrixFilters };
-    const children = [...json.children];
-
-    const key = new IdentificationKey({ ...json, matrixFilters: {}, children: [] });
-    const spaces: [MatrixFilter, MatrixFilterSpace][] = [];
-
-    // add children:
-    children.forEach((child: IdentificationKeyReference) => {
-      key.addChild(child);
-    });
-
-    // add filters
-    Object.values(filters).forEach((value) => {
-      const matrixFilterClass = MatrixFilterClassMap[value.type];
-      const filter = new matrixFilterClass(value);
-
-      key.addMatrixFilter(filter);
-
-      value.space.forEach((space: MatrixFilterSpaceReference) => {
-        if (
-          (
-            matrixFilterClass === RangeFilter &&
-            !spaces.find(([_, s]) => s.spaceIdentifier.slice(0, 36) === space.spaceIdentifier.slice(0, 36))
-          ) ||
-          !spaces.find(([_, s]) => s.spaceIdentifier === space.spaceIdentifier)
-        ) {
-          spaces.push([filter, new MatrixFilterSpace({ ...space, points: filter.weight || 0 })]);
-        }
-      });
-    });
-
-    // add spaces
-    spaces.forEach(([filter, space]) => {
-      filter.addSpace(space);
-      key.addSpace(space);
-    });
-
-    // initial calculation
-    key.computeFilterVisibilityRestrictions();
-    key.computePossibleValues();
-
-    return key;
-  }
+export type RangeFilterDefinition = {
+  min: number|null,
+  max: number|null,
+  step: number|null,
+  tolerance: number|null,
+  unit: string|null,
+  unitVerbose: string|null,
 }
 
-export class IdentificationKey {
-  public uuid: string = '';
-  public name: string = '';
-  public morphotype: string | null = null;
-  public taxon: TaxonType | null = null;
-  public children: IdentificationKeyReference[] = [];
-  public childrenCount: number = 0;
-  public templateContents: any[] = [];
-  public slug: string = '';
-  public overviewImage: ImageUrls| null = null;
-  public matrixFilters: Record<string, MatrixFilter> = {};
-  public identificationMode: IdentificationModes = IdentificationModes.strict;
-  public description: string = '';
+export type RangeFilterData = MatrixFilterData & {
+  space: RangeFilterSpaceData[],
+  definition: RangeFilterDefinition,
+}
 
-  /**
-   * A matrix that maps spaces to the nodes that they encode for. E.g. if the space "brown" for the filter "color" is
-   * mapping to the nodes 1 and 2 but not node 3, the matrix will look like this (assuming there are 3 nodes in total):
-   * [
-   *  [1, 1, 0],
-   *  // other spaces e.g. "red" come here...
-   *  // also other spaces of other filters e.g. "small" for the filter "size"
-   * ]
-   *
-   * Both row and column indices correspond to the order of the spaces and nodes in the respective arrays.
-   */
-  public spaceNodeMapping: (0 | 1)[][] = [];
+export type NumberFilterDefinition = {
+  unit: string,
+  unitVerbose:string,
+}
 
-  /**
-   * A 1 for each selected space, 0 for each deselected space. The index of the array corresponds to the index of the
-   * space in the spaces array.
-   */
-  public selectedSpaces: (0 | 1)[] = [];
+export type NumberFilterData = MatrixFilterData & {
+  space: NumberFilterSpaceData[],
+}
 
-  /**
-   * List of all Spaces this key has. This is a flat list of all spaces of all filters.
-   */
-  public spaces: MatrixFilterSpace[] = [];
+export type TextOnlyFilterData = MatrixFilterData & {
+  space: TextOnlyFilterSpaceData[],
+}
 
-  /**
-   * All nodes are either 1 or 0. 1 means the node is possible, 0 means the node is impossible.
-   * The values get updated by the computePossibleValues method.
-   */
-  public possibleNodes: (0 | 1)[] = [];
+export type ColorFilterData = MatrixFilterData & {
+  space: ColorFilterSpaceData[],
+}
 
-  /**
-   * All spaces are either 1 or 0. 1 means the space is possible, 0 means the space is impossible.
-   * The values get updated by the computePossibleValues method.
-   */
-  public possibleSpaces: (0 | 1)[] = [];
+export type TaxonFilterData = MatrixFilterData & {
+  space: TaxonFilterSpaceData[],
+}
 
-  /**
-   * A two-dimensional array that maps filters to the spaces that they are restricted. E.g.
-   * [
-   *  // first filter has no restrictions
-   *  [],
-   *
-   *  // the second filter has one restriction.
-   *  // It is only visible if the first space is selected
-   *  [[0]],
-   *
-   *  // the third filter has two restrictions. Both spaces restricting this filter are within the same filter,
-   *  // so this filter is only visible if the first OR second space is selected
-   *  [[0, 1]],
-   *
-   *  // the fourth filter has two restrictions. It is only visible if the first space is selected AND the
-   *  // fourth space is selected. This is because the two restrictions are in different filters.
-   *  [[0], [3]],
-   * ]
-   */
-  public filterVisibilityRestrictions: number[][][] = [];
+export type MatrixFilterDataTypes = DescriptiveTextAndImagesFilterData | RangeFilterData | NumberFilterData | TextOnlyFilterData | ColorFilterData | TaxonFilterData;
 
-  /**
-   * A flat list of filter indices. 1 if the filter is visible, 0 if the filter is not visible.
-   */
-  public visibleFilters: (0 | 1)[] = [];
 
-  /**
-   * List of all child nodes that are currently possible. This is updated by the computeResults method.
-   */
-  public results: IdentificationKeyReference[] = [];
+export type NodeSpace = {
+  spaceIdentifier: string,
+  encodedSpace: string,
+}
 
-  /**
-   * List of all child nodes that are currently impossible. This is updated by the computeResults method.
-   */
-  public impossibleResults: IdentificationKeyReference[] = [];
+export type NodeColorFilterSpace = {
+  spaceIdentifier: string,
+  encodedSpace: [number, number, number, number],
+}
 
-  /**
-   * A simple mapping of the uuid of a node to the number of points it has.
-   */
-  public points: Record<string, number> = {};
+export type NodeRangeFilterSpace = {
+  spaceIdentifier: string,
+  encodedSpace: [number, number],
+}
 
+export type NodeSpaces = NodeSpace | NodeColorFilterSpace | NodeRangeFilterSpace;
+
+export type NodeData = {
+  uuid: string,
+  nodeType: NodeType,
+  imageUrl: ImageUrls,
+  space: Record<string, NodeSpaces[]>,
+  name: string,
+  morphotype: string | null,
+  maxPoints: number,
+  taxon: TaxonType,
+  slug: string,
+  description: string | null,
+}
+
+export type IdentificationStepData = {
+  uuid: string,
+  name: string,
+  morphotype: string | null,
+  taxon: TaxonType
+  children: NodeData[],
+  matrixFilters: Record<string, MatrixFilterDataTypes>,
+  identificationMode: IdentificationModes,
+  slug: string,
+  overviewImage: ImageUrls|null,
+  description: string|null,
+  childrenCount: number,
+}
+
+export type NatureGuideComponent = FeatureBase & {
+  options: {
+    resultAction: ComponentLink,
+    version?:string,
+  },
+
+  tree: Record<string, IdentificationStepData>,
+  startNodeUuid: string,
+  slugs: Record<string, string>,
+  imageUrl: ImageUrls,
+}
+
+/**
+ * usable classes
+ */
+
+class EventEmitter {
   private listeners: Record<string, Function[]> = {};
 
-  constructor(init?: Partial<IdentificationKey>) {
-    Object.assign(this, init);
-
-    // make sure we automatically deselect filters which are restricted and become invisible once the "parent" space is deselected
-    this.on(
-      IdentificationEvents.filterBecameInvisible,
-      (event: string, key: IdentificationKey, payload: { index: number, filter: MatrixFilter }) => this.deselectMatrixFilter(payload.filter),
-    );
-  }
-
-  addChild(child: IdentificationKeyReference) {
-    this.children.push(child);
-    this.possibleNodes.push(1);
-  }
-
-  addMatrixFilter(filter: MatrixFilter) {
-    this.matrixFilters[filter.uuid] = filter;
-    this.visibleFilters.push(Object.keys(filter.restrictions).length > 0 ? 0 : 1);
-
-    if (filter instanceof MatrixFilterClassMap.RangeFilter) {
-      // register listener to update the space node mapping when the encoded space changes
-      this.on(IdentificationEvents.beforeSpaceSelected, filter.updateEncodedSpace.bind(filter));
-      this.on(IdentificationEvents.spaceInitialized, filter.updateEncodedSpaceMapping.bind(filter));
-    }
-  }
-
-  addSpace(space: MatrixFilterSpace) {
-    if (this.spaces.find(s => s.spaceIdentifier === space.spaceIdentifier)) {
-      return;
-    }
-
-    this.spaces.push(space);
-    this.selectedSpaces.push(0);
-    this.possibleSpaces.push(1);
-    this.spaceNodeMapping.push((new Array(this.children.length).fill(0)).map((_, nodeIndex) => {
-      const splits = space.spaceIdentifier.split(':', 1);
-      const filter = this.children[nodeIndex].space[splits[0]];
-      if (filter) {
-        return filter.find(reference => reference.spaceIdentifier === space.spaceIdentifier) ? 1 : 0;
-      }
-
-      return 0;
-    }));
-    this.notifyListeners(IdentificationEvents.spaceInitialized, this.spaces.length - 1);
-  }
-
   /**
-   * Make sure this is called after all filters and spaces have been added
+   * Register an event listener.
    */
-  computeFilterVisibilityRestrictions() {
-    this.filterVisibilityRestrictions = Object.values(this.matrixFilters).map((filter) => {
-      return Object.values(filter.restrictions).map((restriction: MatrixFilterSpace[]) => {
-        return restriction.map((space) => {
-          return this.findSpaceIndex(space as MatrixFilterSpace);
-        });
-      });
-    });
-  }
-
-  /**
-   * Register a callback for an identification event
-   *
-   * @param event
-   * @param callback
-   */
-  on(event: IdentificationEvents, callback: Function): void {
+  on(event: string, callback: Function): void {
     if (!this.listeners[event]) {
       this.listeners[event] = [];
     }
@@ -510,158 +235,900 @@ export class IdentificationKey {
   }
 
   /**
-   * Unregister a callback for an event
-   *
-   * @param event
-   * @param callback
+   * Remove an event listener.
    */
-  off(event: IdentificationEvents, callback: Function): void {
+  off(event: string, callback: Function): void {
     if (this.listeners[event]) {
-      this.listeners[event] = this.listeners[event].filter(f => f !== callback);
+      this.listeners[event] = this.listeners[event].filter((f) => f !== callback);
     }
   }
 
   /**
-   * Notifies all registered listeners for a given event.
-   *
-   * @param event
-   * @param payload optional payload for the event
-   * @private
+   * Emit an event and call all registered listeners.
    */
-  notifyListeners(event: IdentificationEvents, ...payload: any[]) {
-    (this.listeners[event] || []).forEach((callback) => {
-      callback.call(callback, event, this, ...payload);
-    });
+  emit(event: string, payload: any): void {
+    if (this.listeners[event]) {
+      this.listeners[event].forEach((callback) => callback(payload));
+    }
+  }
+}
+
+/**
+ * Nodes
+ * - If a node becomes impossible, it should notify all matching spaces
+ */
+export class Node extends EventEmitter {
+
+  data: NodeData;
+
+  identificationStep: IdentificationStep; // Reference to the IdentificationStep this node belongs to
+
+  uuid: string = '';
+  name: string = '';
+  slug: string = '';
+  isPossible: boolean = true;
+  points: number = 0;
+
+  private matchingSpaces: Set<MatrixFilterSpaces> = new Set(); // Spaces this node belongs to
+  private mismatchingSpaces: Set<MatrixFilterSpaces> = new Set(); // Spaces this node does not belong to
+
+  private selectedMatchingSpaces: Record<string, Set<string>> = {}; // Spaces that are selected for this node
+  private selectedMismatchingSpaces: Record<string, Set<string>> = {}; // Spaces that are selected for this node but do not match
+
+  constructor (data: NodeData, identificationStep: IdentificationStep) {
+    super();
+    this.identificationStep = identificationStep;
+    this.uuid = data.uuid;
+    this.name = data.name;
+    this.slug = data.slug;
+    this.data = data;
   }
 
-  computePossibleValues() {
-    this.possibleNodes = this.children.map((_, nodeIndex) => {
-      return this.spaces.reduce((a, b, spaceIndex) => {
-        return a && (this.spaceNodeMapping[spaceIndex][nodeIndex] === 1 && this.selectedSpaces[spaceIndex] === 1 || this.selectedSpaces[spaceIndex] === 0);
-      }, true)
-        ? 1
-        : 0;
-    });
-    this.possibleSpaces = this.spaces.map((_, spaceIndex) => {
-      return this.selectedSpaces[spaceIndex] === 1 || this.children.reduce((a, b, nodeIndex) => {
-        return a || (this.spaceNodeMapping[spaceIndex][nodeIndex] === 1 && this.possibleNodes[nodeIndex] === 1);
-      }, false)
-        ? 1
-        : 0;
-    });
+  addMismatch(matrixFilterUuid: string, spaceIdentifier: string) {
 
-    this.points = Object.fromEntries(this.children.map((node, index) => [
-      node.uuid,
-      this.spaces.reduce((a, b, spaceIndex) => {
-        return a + (this.spaceNodeMapping[spaceIndex][index] === 1 && this.selectedSpaces[spaceIndex] === 1 ? this.spaces[spaceIndex].points : 0);
-      }, 0),
-    ]));
+    if (!this.selectedMismatchingSpaces[matrixFilterUuid]) {
+      this.selectedMismatchingSpaces[matrixFilterUuid] = new Set();
+    }
 
-    this.visibleFilters = Object.values(this.matrixFilters).map((filter, index) => {
-      const visible = this.filterVisibilityRestrictions[index].every(r => r.some(v => this.selectedSpaces[v] === 1));
-      if (visible && 0 === this.visibleFilters[index]) {
-        this.notifyListeners(IdentificationEvents.filterBecameVisible, { filter, index });
-      } else if (!visible && 1 === this.visibleFilters[index]) {
-        this.notifyListeners(IdentificationEvents.filterBecameInvisible, { filter, index });
-      }
+    // add only if not yet added
+    if (this.selectedMismatchingSpaces[matrixFilterUuid].has(spaceIdentifier)) {
+      return; // Already added, no need to add again
+    }
 
-      return visible ? 1 : 0;
-    });
+    this.selectedMismatchingSpaces[matrixFilterUuid].add(spaceIdentifier); // Add spaceIdentifier to the record
 
-    this.computeResults();
-  }
-
-  computeResults() {
-    this.results = this.sortNodes(this.children.filter((_, index) => this.possibleNodes[index] === 1));
-    this.impossibleResults = this.sortNodes(this.children.filter((_, index) => this.possibleNodes[index] === 0));
-
-    //if (this.results.length === 1 || this.doneFilters.every(v => v)) {
-    if (this.doneFilters.every(v => v)) {
-      this.notifyListeners(
-        IdentificationEvents.identificationKeyDone,
-        { resultCount: this.results.length },
-      )
+    if (Object.keys(this.selectedMismatchingSpaces).length >= 0) {
+      this.makeImpossible();
     }
   }
 
-  private sortNodes(nodes: IdentificationKeyReference[]) {
-    return nodes.sort((a, b) => {
-      return ((this.points[b.uuid] || 0) / b.maxPoints) - ((this.points[a.uuid] || 0) / a.maxPoints);
+  removeMismatch(matrixFilterUuid: string, spaceIdentifier: string) {
+
+    if (this.selectedMismatchingSpaces[matrixFilterUuid]) {
+
+      // only delete if it exists
+      if (!this.selectedMismatchingSpaces[matrixFilterUuid].has(spaceIdentifier)) {
+        return; // SpaceIdentifier not found, no need to remove
+      }
+
+      this.selectedMismatchingSpaces[matrixFilterUuid].delete(spaceIdentifier); // Remove spaceIdentifier from the record
+
+      // Clean up empty sets
+      if (this.selectedMismatchingSpaces[matrixFilterUuid].size === 0) {
+        delete this.selectedMismatchingSpaces[matrixFilterUuid];
+      }
+    }
+
+    if (Object.keys(this.selectedMismatchingSpaces).length === 0) {
+      this.makePossible();
+    }
+  }
+
+  addMatch(matrixFilterUuid: string, spaceIdentifier: string) {
+    if (!this.selectedMatchingSpaces[matrixFilterUuid]) {
+      this.selectedMatchingSpaces[matrixFilterUuid] = new Set();
+    }
+
+    // add only if not yet added
+    if (this.selectedMatchingSpaces[matrixFilterUuid].has(spaceIdentifier)) {
+      return; // Already added, no need to add again
+    }
+    this.addPoints(1); // Add points for matching space
+    this.selectedMatchingSpaces[matrixFilterUuid].add(spaceIdentifier); // Add spaceIdentifier to the record
+  }
+
+  removeMatch(matrixFilterUuid: string, spaceIdentifier: string) {
+    if (this.selectedMatchingSpaces[matrixFilterUuid]) {
+
+      // only delete if it exists
+      if (!this.selectedMatchingSpaces[matrixFilterUuid].has(spaceIdentifier)) {
+        return; // SpaceIdentifier not found, no need to remove
+      }
+      this.removePoints(1); // Remove points for matching space
+      this.selectedMatchingSpaces[matrixFilterUuid].delete(spaceIdentifier); // Remove spaceIdentifier from the record
+
+      // Clean up empty sets
+      if (this.selectedMatchingSpaces[matrixFilterUuid].size === 0) {
+        delete this.selectedMatchingSpaces[matrixFilterUuid];
+      }
+    }
+  }
+
+  makePossible() {
+    this.isPossible = true;
+
+    setTimeout(() => {
+      this.notifyMatchingSpacesOfPossibility();
+      this.emit(NodeEvents.NodePossible, this);
+    }, 0);
+  }
+
+  makeImpossible() {
+    this.isPossible = false;
+
+    setTimeout(() => {
+      this.notifyMatchingSpacesOfImpossibility();
+      this.emit(NodeEvents.NodeImpossible, this);
+    }, 0);
+  }
+
+  private addPoints(points: number) {
+    const oldPoints = this.points;
+    this.points += points;
+    this.emit(NodeEvents.NodePointsChanged, {
+      points: this.points,
+    });
+
+    this.identificationStep.onNodePointsChanged(this, oldPoints);
+  }
+
+  private removePoints(points: number) {
+    if (this.points <= 0) {
+      return;
+    }
+
+    const oldPoints = this.points;
+
+    this.points -= points;
+
+    this.emit(NodeEvents.NodePointsChanged, {
+      points: this.points,
+    });
+
+    this.identificationStep.onNodePointsChanged(this, oldPoints);
+  }
+
+  registerMatchingSpace(space: MatrixFilterSpaces) {
+    this.matchingSpaces.add(space);
+  }
+
+  registerMismatchingSpace(space: MatrixFilterSpaces) {
+    this.mismatchingSpaces.add(space);
+  }
+
+  notifyMatchingSpacesOfImpossibility() {
+    this.matchingSpaces.forEach((space) => {
+      space.matchingNodeBecameImpossible(this);
+    });
+  }
+
+  notifyMatchingSpacesOfPossibility() {
+    this.matchingSpaces.forEach((space) => {
+      space.matchingNodeBecamePossible(this);
+    });
+  }
+}
+
+/**
+ * Matrix Filters
+ */
+
+class MatrixFilter extends EventEmitter {
+
+  uuid: string = '';
+
+  identificationStep: IdentificationStep;
+
+  public isVisible: boolean = true;
+  private allowMultipleValues: boolean = false; // if true, multiple values can be selected in the UI
+
+  spaces: MatrixFilterSpaces[] = [];
+  selectedSpaces: Set<string> = new Set();
+
+  activeRestrictiveSpaces: Set<MatrixFilterSpace> = new Set(); // spaces that restrict this matrix filter
+
+  constructor (identificationStep: IdentificationStep, uuid: string, isVisibile: boolean, allowMultipleValues: boolean) {
+    super();
+    this.identificationStep = identificationStep;
+    this.uuid = uuid;
+    this.isVisible = isVisibile;
+    this.allowMultipleValues = allowMultipleValues;
+  }
+
+  registerSpace(space: MatrixFilterSpaces) {
+    this.spaces.push(space);
+  };
+
+  onSelectSpace(spaceIdentifier: string) {
+    this.selectedSpaces.add(spaceIdentifier);
+
+    // make all other spaces impossible
+    this.spaces.forEach((space) => {
+      if (space.spaceIdentifier !== spaceIdentifier && this.allowMultipleValues === false) {
+        // if allowMultipleValues is false, all other spaces become impossible
+        space.makeImpossible()
+      }
     });
   }
 
   /**
-   * Returns true for each visible filter that either has a selected space or no possible space
-   *
-   * Use with care, as this is an expensive operation.
+   * making the space possible has to respect if the current possible nodes allow this
+   * this is stored on the space itself
    */
-  get doneFilters() {
-    return Object.values(this.matrixFilters).map((filter, index) => {
-      if (this.visibleFilters[index] === 0) {
-        return true;
+  onDeselectSpace(spaceIdentifier: string) {
+    if (this.selectedSpaces.has(spaceIdentifier)) {
+      this.selectedSpaces.delete(spaceIdentifier);
+
+      this.spaces.forEach((space) => {
+        space.onMatrixFilterNoSelection();
+      });
+    }
+  }
+
+  addRestrictiveSpace(restriction: MatrixFilterSpace) {
+    if (this.activeRestrictiveSpaces.size === 0) {
+      this.makeInvisile();
+    }
+    this.activeRestrictiveSpaces.add(restriction);
+  }
+
+  removeRestrictiveSpace(restriction: MatrixFilterSpace) {
+    if (!this.activeRestrictiveSpaces.has(restriction)) {
+      console.warn(`Trying to remove a restrictive space that is not registered: ${restriction.spaceIdentifier}`);
+      return;
+    }
+    this.activeRestrictiveSpaces.delete(restriction);
+    if (this.activeRestrictiveSpaces.size === 0) {
+      this.makeVisible();
+    }
+  }
+
+  makeVisible() {
+    this.isVisible = true;
+    this.emit(MatrixFilterEvents.MatrixFilterBecameVisible, this);
+  }
+
+  /**
+   * If a Matrix Filter becomes invisible, its selected spaces are deselected
+   */
+  makeInvisile() {
+    this.isVisible = false;
+    this.spaces.forEach((space) => {
+      space.deselect();
+    });
+    this.emit(MatrixFilterEvents.MatrixFilterBecameInvisible, this);
+  }
+
+}
+
+export class DescriptiveTextAndImagesFilter extends MatrixFilter {
+
+  data: DescriptiveTextAndImagesFilterData;
+  spaces: DescriptiveTextAndImagesFilterSpace[] = [];
+
+  constructor (identificationStep: IdentificationStep, data: DescriptiveTextAndImagesFilterData) {
+    super(identificationStep, data.uuid, !data.isRestricted, data.allowMultipleValues);
+    this.data = data;
+  }
+}
+
+export class RangeFilter extends MatrixFilter {
+  
+  data: RangeFilterData;
+  spaces: RangeFilterSpace[] = [];
+
+  constructor (identificationStep: IdentificationStep, data: RangeFilterData) {
+    super(identificationStep, data.uuid, !data.isRestricted, data.allowMultipleValues);
+    this.data = data;
+  }
+}
+
+export class NumberFilter extends MatrixFilter {
+  data: NumberFilterData;
+  spaces: NumberFilterSpace[] = [];
+
+  constructor (identificationStep: IdentificationStep, data: NumberFilterData) {
+    super(identificationStep, data.uuid, !data.isRestricted, data.allowMultipleValues);
+    this.data = data;
+  }
+}
+
+export class TextOnlyFilter extends MatrixFilter {
+  data: TextOnlyFilterData;
+  spaces: TextOnlyFilterSpace[] = [];
+
+  constructor (identificationStep: IdentificationStep, data: TextOnlyFilterData) {
+    super(identificationStep, data.uuid, !data.isRestricted, data.allowMultipleValues);
+    this.data = data;
+  }
+}
+
+export class ColorFilter extends MatrixFilter {
+  data: ColorFilterData;
+  spaces: ColorFilterSpace[] = [];
+
+  constructor (identificationStep: IdentificationStep, data: ColorFilterData) {
+    super(identificationStep, data.uuid, !data.isRestricted, data.allowMultipleValues);
+    this.data = data;
+  }
+}
+
+export class TaxonFilter extends MatrixFilter {
+  data: MatrixFilterData;
+  spaces: TaxonFilterSpace[] = [];
+
+  constructor (identificationStep: IdentificationStep, data: MatrixFilterData) {
+    super(identificationStep, data.uuid, !data.isRestricted, data.allowMultipleValues);
+    this.data = data;
+  }
+}
+
+
+type MatrixFilters = DescriptiveTextAndImagesFilter | RangeFilter | NumberFilter | TextOnlyFilter | ColorFilter | TaxonFilter;
+
+/**
+ * Spaces 
+ */
+
+class MatrixFilterSpace extends EventEmitter {
+
+  spaceIdentifier: string = ''; // set by subclasses
+  matrixFilter: MatrixFilters;
+
+  matchingNodes: Set<Node> = new Set(); // Use Set instead of Array
+  mismatchingNodes: Set<Node> = new Set(); // Use Set instead of Array
+
+  restrictsMatrixFilters: Set<MatrixFilters> = new Set(); // Use Set for restricted matrix filters
+
+  impossibleMatchingNodes: Set<Node> = new Set(); // Use Set for impossible nodes
+
+  isSelected: boolean = false;
+  isPossible: boolean = true;
+
+  constructor(spaceIdentifier: string, matrixFilter: MatrixFilters) {
+    super();
+    this.spaceIdentifier = spaceIdentifier;
+    this.matrixFilter = matrixFilter;
+  }
+
+  /**
+   * Add a node to the matchingNodes set.
+   */
+  registerMatchingNode(node: Node) {
+    this.matchingNodes.add(node);
+  }
+
+  /**
+   * Add a node to the mismatchingNodes set.
+   */
+  registerMismatchingNode(node: Node) {
+    this.mismatchingNodes.add(node);
+  }
+
+  /**
+   * Remove a node from the matchingNodes set.
+   */
+  unregisterMatchingNode(node: Node) {
+    this.matchingNodes.delete(node);
+  }
+
+  /**
+   * Remove a node from the mismatchingNodes set.
+   */
+  unregisterMismatchingNode(node: Node) {
+    this.mismatchingNodes.delete(node);
+  }
+
+  /**
+   * Add a node to the impossibleMatchingNodes set.
+   */
+  registerImpossibleMatchingNode(node: Node) {
+    this.impossibleMatchingNodes.add(node);
+  }
+
+  /**
+   * Remove a node from the impossibleMatchingNodes set.
+   */
+  unregisterImpossibleMatchingNode(node: Node) {
+    this.impossibleMatchingNodes.delete(node);
+  }
+
+  select(): void {
+    this.isSelected = true; // Update the UI immediately
+
+    // Perform background computations asynchronously
+    setTimeout(() => {
+      this.emit(SpaceEvents.SpaceSelected, this);
+
+      this.matchingNodes.forEach((node) => {
+        node.addMatch(this.matrixFilter.uuid, this.spaceIdentifier);
+      });
+
+      this.mismatchingNodes.forEach((node) => {
+        node.addMismatch(this.matrixFilter.uuid, this.spaceIdentifier);
+      });
+
+      this.matrixFilter.onSelectSpace(this.spaceIdentifier);
+
+      this.restrictsMatrixFilters.forEach((matrixFilter) => {
+        matrixFilter.removeRestrictiveSpace(this);
+      });
+    }, 0); // Perform computations in the next tick
+  }
+
+  deselect() {
+    this.isSelected = false;
+
+    setTimeout(() => {
+
+      this.emit(SpaceEvents.SpaceDeselected, this);
+
+      this.matchingNodes.forEach((node) => {
+        node.removeMatch(this.matrixFilter.uuid, this.spaceIdentifier);
+      });
+
+      this.mismatchingNodes.forEach((node) => {
+        node.removeMismatch(this.matrixFilter.uuid, this.spaceIdentifier);
+      });
+
+      this.matrixFilter.onDeselectSpace(this.spaceIdentifier);
+
+      // remove restriction from restricted MatrixFilter
+      this.restrictsMatrixFilters.forEach((matrixFilter) => {
+        matrixFilter.addRestrictiveSpace(this);
+      });
+    }, 0);
+  }
+
+  /**
+   * make the space possible again if the impossibleMatchingNodes allow it
+   * this is called when the matrix filter has no selection anymore
+   */
+  onMatrixFilterNoSelection () {
+    if (this.impossibleMatchingNodes.size < this.matchingNodes.size) {
+      // there are mathcing nodes for this space
+      this.makePossible();
+    }
+  }
+
+  makePossible() {
+    if (!this.isPossible) {
+      this.isPossible = true;
+      this.emit(SpaceEvents.SpacePossible, this.spaceIdentifier);
+    }
+  }
+
+  makeImpossible() {
+    if (this.isPossible) {
+      this.isPossible = false;
+      this.emit(SpaceEvents.SpaceImpossible, this.spaceIdentifier);
+    }
+  }
+
+  /**
+   * node management
+   */
+
+  matchingNodeBecameImpossible(node: Node): void {
+    this.impossibleMatchingNodes.add(node);
+    // compare impossibleMatchingNodes with matchingNodes
+    if (this.impossibleMatchingNodes.size === this.matchingNodes.size) {
+      this.makeImpossible();
+    }
+  }
+
+  matchingNodeBecamePossible(node: Node): void {
+    this.impossibleMatchingNodes.delete(node);
+    if (this.impossibleMatchingNodes.size < this.matchingNodes.size) {
+      this.makePossible();
+    }
+  }
+
+  /**
+   * Restrictive spaces management
+   */
+
+  registerRestrictedMatrixFilter(matrixFilter: MatrixFilters): void {
+    this.restrictsMatrixFilters.add(matrixFilter);
+  }
+}
+
+export class DescriptiveTextAndImagesFilterSpace extends MatrixFilterSpace {
+  matrixFilter: DescriptiveTextAndImagesFilter;
+  data: DescriptiveTextAndImagesFilterSpaceData;
+
+  constructor (matrixFilter: DescriptiveTextAndImagesFilter, data: DescriptiveTextAndImagesFilterSpaceData) {
+    const spaceIdentifier = data.spaceIdentifier;
+    super(spaceIdentifier, matrixFilter);
+    this.data = data;
+    this.matrixFilter = matrixFilter;
+  }
+}
+
+export class RangeFilterSpace extends MatrixFilterSpace {
+  matrixFilter: RangeFilter;
+  data: RangeFilterSpaceData;
+
+  constructor (matrixFilter: RangeFilter, data: RangeFilterSpaceData) {
+    const spaceIdentifier = data.spaceIdentifier;
+    super(spaceIdentifier, matrixFilter);
+    this.data = data;
+    this.matrixFilter = matrixFilter;
+  }
+
+  select (): void {
+    throw new Error('RangeFilterSpace does not support selection. Use selectNumber() instead.');
+  }
+
+  selectNumber(value: number) {
+
+    this.matrixFilter.identificationStep.nodes.forEach((node) => {
+
+      // Check if the node has data for this space
+      if (!node.data.space || !node.data.space[this.matrixFilter.uuid]) {
+        // If no data for this space, skip the node
+        // console.warn(`Node ${node.uuid} has no data for matrix filter ${this.matrixFilter.uuid} and space ${this.spaceIdentifier}`);
+        node.addMismatch(this.matrixFilter.uuid, this.spaceIdentifier);
+        node.removeMatch(this.matrixFilter.uuid, this.spaceIdentifier);
+        return;
       }
 
-      // for each visible filter, check if it has at least one selected or possible space
-      // if not, then it is impossible
-      const spaceIndices = filter.space.map((space) => this.findSpaceIndex(space))
+      const nodeSpaceData = node.data.space[this.matrixFilter.uuid] as NodeRangeFilterSpace[];
+      // If nodeSpaceData is not an array or is empty, skip the node
+      if (!Array.isArray(nodeSpaceData) || nodeSpaceData.length === 0) {
+        // console.warn(`Node ${node.uuid} has no valid data for matrix filter ${this.matrixFilter.uuid} and space ${this.spaceIdentifier}`);
+        node.addMismatch(this.matrixFilter.uuid, this.spaceIdentifier);
+        node.removeMatch(this.matrixFilter.uuid, this.spaceIdentifier);
+        return;
+      }
 
-      const hasOneSelectedSpace = spaceIndices
-        .some((spaceIndex) => this.selectedSpaces[spaceIndex] === 1);
-      const hasNoPossibleSpace = spaceIndices
-        .every((spaceIndex) => this.possibleSpaces[spaceIndex] === 0);
+      // Check if the nodeSpaceData is valid and has the expected structure
 
-      return hasOneSelectedSpace || hasNoPossibleSpace;
-    }).map(possible => possible ? 1 : 0);
-  }
+      if (nodeSpaceData && nodeSpaceData.length > 0) {
+        // currently, only one range is supported per range filter
+        const [nodeMin, nodeMax] = nodeSpaceData[0].encodedSpace;
 
-  /***
-   * Select Space:
-   * To select a space we flip the value in `selectedSpaces` to 1 and compute the follow-up matrices
-   */
-  selectSpace(index: number, encodedSpace: any = null) {
-    this.notifyListeners(IdentificationEvents.beforeSpaceSelected, { index, encodedSpace });
+        let adjustedMin = nodeMin;
+        let adjustedMax = nodeMax;
 
-    if (this.selectedSpaces[index] === 1 || this.possibleSpaces[index] === 0) {
-      return;
-    }
+        if (this.matrixFilter.data.definition.tolerance) {
+          const tolerance = this.matrixFilter.data.definition.tolerance;
+          // Apply tolerance to the nodeMin and nodeMax
+          adjustedMax = adjustedMax + (adjustedMax * ( tolerance / 100));
+          adjustedMin = adjustedMin - (adjustedMin * ( tolerance / 100));
+        }
 
-    this.selectedSpaces[index] = 1;
-    this.computePossibleValues();
-    this.notifyListeners(IdentificationEvents.spaceSelected, { index, encodedSpace });
-  }
+        if (value >= adjustedMin && value <= adjustedMax) {
+          node.removeMismatch(this.matrixFilter.uuid, this.spaceIdentifier);
+          node.addMatch(this.matrixFilter.uuid, this.spaceIdentifier);
+        } else {
+          // add mismatch
+          node.addMismatch(this.matrixFilter.uuid, this.spaceIdentifier);
+          node.removeMatch(this.matrixFilter.uuid, this.spaceIdentifier);
+        }
+      }
+    });
 
-  deselectSpace(index: number, encodedSpace: any = null) {
-    if (this.selectedSpaces[index] === 0) {
-      return;
-    }
-    this.selectedSpaces[index] = 0;
-    this.computePossibleValues();
-    this.notifyListeners(IdentificationEvents.spaceDeselected, { index, encodedSpace });
-  }
-
-  deselectMatrixFilter(filter: MatrixFilter) {
-    filter.space.forEach(space => {
-      this.deselectSpace(this.findSpaceIndex(space));
+    this.restrictsMatrixFilters.forEach((matrixFilter) => {
+      const restrictionRange = this.getRestrictionRange(matrixFilter);
+      //console.log(`RangeFilterSpace: Checking restriction for matrix filter ${matrixFilter.uuid} with space ${this.spaceIdentifier}`);
+      //console.log(`RangeFilterSpace: Restriction range is ${restrictionRange}`);
+      if (restrictionRange) {
+        const [restrictionMin, restrictionMax] = restrictionRange;
+        if (value >= restrictionMin && value <= restrictionMax) {
+          //console.log(`RangeFilterSpace: Value ${value} is within the restriction range [${restrictionMin}, ${restrictionMax}] for matrix filter ${matrixFilter.uuid}`);
+          matrixFilter.removeRestrictiveSpace(this);
+        } else {
+          matrixFilter.addRestrictiveSpace(this);
+        }
+      }
+      
     });
   }
 
-  findSpaceIndex(space: MatrixFilterSpace) {
-    return this.spaces.findIndex(s => s.spaceIdentifier === space.spaceIdentifier);
+  getRestrictionRange (restrictedMatrixFilter: MatrixFilters): [number, number] | null{
+    const restrictionSpace = restrictedMatrixFilter.data.restrictions[this.matrixFilter.uuid]?.[0];
+    if (restrictionSpace) {
+      const restrictionRange = restrictionSpace.encodedSpace as [number, number];
+      return restrictionRange;
+    }
+    else {
+      console.warn(`RangeFilterSpace: No restriction found for matrix filter ${restrictedMatrixFilter.uuid} and space ${this.spaceIdentifier}`);
+    }
+
+    return null;
   }
 
-  findFilterIndex(filter: MatrixFilter) {
-    return Object.values(this.matrixFilters).findIndex(f => f.uuid === filter.uuid);
+  deselect(): void {
+    this.deselectNumber();
   }
 
-  isSpaceSelected(space: MatrixFilterSpace): boolean {
-    return this.selectedSpaces[this.findSpaceIndex(space)] === 1;
+  deselectNumber() {
+    this.matrixFilter.identificationStep.nodes.forEach((node) => {
+      node.removeMatch(this.matrixFilter.uuid, this.spaceIdentifier);
+      node.removeMismatch(this.matrixFilter.uuid, this.spaceIdentifier);
+    });
+
+    this.restrictsMatrixFilters.forEach((matrixFilter) => {
+      matrixFilter.addRestrictiveSpace(this);
+    });
+  }
+}
+
+export class NumberFilterSpace extends MatrixFilterSpace {
+  matrixFilter: NumberFilter;
+  data: NumberFilterSpaceData;
+
+  constructor (matrixFilter: NumberFilter, data: NumberFilterSpaceData) {
+    const spaceIdentifier = data.spaceIdentifier;
+    super(spaceIdentifier, matrixFilter);
+    this.data = data;
+    this.matrixFilter = matrixFilter;
+  }
+}
+
+export class TextOnlyFilterSpace extends MatrixFilterSpace {
+  matrixFilter: TextOnlyFilter;
+  data: TextOnlyFilterSpaceData;
+
+  constructor (matrixFilter: TextOnlyFilter, data: TextOnlyFilterSpaceData) {
+    const spaceIdentifier = data.spaceIdentifier;
+    super(spaceIdentifier, matrixFilter);
+    this.data = data;
+    this.matrixFilter = matrixFilter;
+  }
+}
+
+export class ColorFilterSpace extends MatrixFilterSpace {
+  matrixFilter: ColorFilter;
+  data: ColorFilterSpaceData;
+
+  constructor (matrixFilter: ColorFilter, data: ColorFilterSpaceData) {
+    const spaceIdentifier = data.spaceIdentifier;
+    super(spaceIdentifier, matrixFilter);
+    this.data = data;
+    this.matrixFilter = matrixFilter;
+  }
+}
+
+export class TaxonFilterSpace extends MatrixFilterSpace {
+  matrixFilter: TaxonFilter;
+  data: TaxonFilterSpaceData;
+
+  constructor (matrixFilter: TaxonFilter, data: TaxonFilterSpaceData) {
+    const spaceIdentifier = data.spaceIdentifier;
+    super(spaceIdentifier, matrixFilter);
+    this.data = data;
+    this.matrixFilter = matrixFilter;
+  }
+}
+
+type MatrixFilterSpaces = DescriptiveTextAndImagesFilterSpace | RangeFilterSpace | NumberFilterSpace | TextOnlyFilterSpace | ColorFilterSpace | TaxonFilterSpace;
+
+/**
+ * Identification Step
+ */
+
+export class IdentificationStep extends EventEmitter {
+
+  uuid: string;
+  slug: string;
+  name: string;
+  nodes: Node[];
+  matrixFilters: Record<string, MatrixFilters> = {}; // Use a Record for matrixFilters
+  spaces: Record<string, MatrixFilterSpaces> = {}; // Use a Record for spaces
+  currentResult: Node|null = null;
+
+  private pointsToNodes: Record<number, Set<Node>> = {};
+  private maxPoints: number | null = null;
+
+  constructor(data: IdentificationStepData) {
+
+    // console.log('Creating IdentificationStep with data:', data);
+    super();
+    this.uuid = data.uuid;
+    this.slug = data.slug;
+    this.name = data.name;
+
+    // Populate matrixFilters and spaces as Records
+    for (const [matrixfilterUuid, filterData] of Object.entries(data.matrixFilters)) {
+      switch (filterData.type) {
+        case MatrixFilterTypes.DescriptiveTextAndImagesFilter: {
+          const dtaiFilter = new DescriptiveTextAndImagesFilter(this, filterData as DescriptiveTextAndImagesFilterData);
+          this.matrixFilters[filterData.uuid] = dtaiFilter;
+          filterData.space.forEach((spaceData) => {
+            const dtaiFilterSpace = new DescriptiveTextAndImagesFilterSpace(dtaiFilter, spaceData as DescriptiveTextAndImagesFilterSpaceData);
+            this.spaces[spaceData.spaceIdentifier] = dtaiFilterSpace;
+            dtaiFilter.registerSpace(dtaiFilterSpace);
+          });
+          break;
+        }
+        case MatrixFilterTypes.RangeFilter: {
+          const rangeFilter = new RangeFilter(this, filterData as RangeFilterData);
+          this.matrixFilters[filterData.uuid] = rangeFilter;
+          // currently, only one range is supported per range filter
+          const rangeFilterSpaceata = filterData.space[0] as RangeFilterSpaceData;
+          const rangeFilterSpace = new RangeFilterSpace(rangeFilter, rangeFilterSpaceata);
+          this.spaces[rangeFilterSpace.spaceIdentifier] = rangeFilterSpace;
+          rangeFilter.registerSpace(rangeFilterSpace);
+          break;
+        }
+        case MatrixFilterTypes.NumberFilter: {
+          const numberFilter = new NumberFilter(this, filterData as NumberFilterData);
+          this.matrixFilters[filterData.uuid] = numberFilter;
+          filterData.space.forEach((spaceData) => {
+            const numberFilterSpace = new NumberFilterSpace(numberFilter, spaceData as NumberFilterSpaceData);
+            this.spaces[spaceData.spaceIdentifier] = numberFilterSpace;
+            numberFilter.registerSpace(numberFilterSpace);
+          });
+          break;
+        }
+        case MatrixFilterTypes.TextOnlyFilter: {
+          const textOnlyFilter = new TextOnlyFilter(this, filterData as TextOnlyFilterData);
+          this.matrixFilters[filterData.uuid] = textOnlyFilter;
+          filterData.space.forEach((spaceData) => {
+            const textOnlyFilterSpace = new TextOnlyFilterSpace(textOnlyFilter, spaceData as TextOnlyFilterSpaceData);
+            this.spaces[spaceData.spaceIdentifier] = textOnlyFilterSpace;
+            textOnlyFilter.registerSpace(textOnlyFilterSpace);
+          });
+          break;
+        }
+        case MatrixFilterTypes.ColorFilter: {
+          const colorFilter = new ColorFilter(this, filterData as ColorFilterData);
+          this.matrixFilters[filterData.uuid] = colorFilter;
+          filterData.space.forEach((spaceData) => {
+            const colorFilterSpace = new ColorFilterSpace(colorFilter, spaceData as ColorFilterSpaceData);
+            this.spaces[spaceData.spaceIdentifier] = colorFilterSpace;
+            colorFilter.registerSpace(colorFilterSpace);
+          });
+          break;
+        }
+        case MatrixFilterTypes.TaxonFilter: {
+          const taxonFilter = new TaxonFilter(this, filterData as TaxonFilterData);
+          this.matrixFilters[filterData.uuid] = taxonFilter;
+          filterData.space.forEach((spaceData) => {
+            const taxonFilterSpace = new TaxonFilterSpace(taxonFilter, spaceData as TaxonFilterSpaceData);
+            this.spaces[spaceData.spaceIdentifier] = taxonFilterSpace;
+            taxonFilter.registerSpace(taxonFilterSpace);
+          }
+          );
+          break;
+        }
+      }
+    }
+
+    // iterate over all matrixFilters and register restrictions
+    for (const [matrixfilterUuid, filterData] of Object.entries(data.matrixFilters)) {
+      if (filterData.isRestricted) {
+        const restrictedMatrixFilter = this.matrixFilters[matrixfilterUuid];
+        // iterate over Record<string, MatrixFilterRestriction[]> restrictions
+        for (const [restrictiveMatrixFilterUuid, restrictions] of Object.entries(filterData.restrictions)) {
+
+          const restrictiveMatrixFilter = this.matrixFilters[restrictiveMatrixFilterUuid];
+
+          if (restrictiveMatrixFilter.data.type === MatrixFilterTypes.RangeFilter) {
+            const rangeFilter = restrictiveMatrixFilter as RangeFilter;
+            const restriction = restrictions[0]; // currently, only one restriction is supported per range filter
+            const rangeFilterSpace = rangeFilter.spaces[0];
+            rangeFilterSpace.registerRestrictedMatrixFilter(restrictedMatrixFilter);
+            restrictedMatrixFilter.addRestrictiveSpace(rangeFilterSpace);
+          }
+          else {
+            restrictions.forEach((restriction) => {
+              // Find the space in this.spaces that matches the spaceIdentifier
+              let spaceIdentifier = restriction.spaceIdentifier;
+              const space = this.spaces[spaceIdentifier];
+              if (space) {
+                // Register the restriction on the matrix filter
+                space.registerRestrictedMatrixFilter(restrictedMatrixFilter);
+                // Add the restriction to the activeRestrictiveSpaces of the matrix filter
+                restrictedMatrixFilter.addRestrictiveSpace(space);
+              } else {
+                console.warn(`Space with identifier ${spaceIdentifier} not found for restriction.`);
+              }
+            });
+          }
+        }
+      }
+    }
+
+    // Populate nodes and link them to spaces, bi-directionally
+    this.nodes = data.children.map((child) => {
+
+      const node = new Node(child, this);
+
+      // Track which spaces this node matches
+      const matchingSpaceIdentifiers = Object.values(child.space)
+        .flat() // Flatten the array of arrays into a single array of NodeSpace objects
+        .map((spaceData) => spaceData.spaceIdentifier); // Extract spaceIdentifier from each NodeSpace
+
+
+      // Iterate over all spaces in IdentificationStep
+      Object.values(this.spaces).forEach((spaceInstance) => {
+        if (matchingSpaceIdentifiers.includes(spaceInstance.spaceIdentifier)) {
+          // Node matches this space
+          spaceInstance.registerMatchingNode(node);
+          node.registerMatchingSpace(spaceInstance);
+        } else {
+          // Node mismatches this space
+          // console.log(`Node ${node.data.name} does not match space ${spaceInstance.spaceIdentifier}`);
+          spaceInstance.registerMismatchingNode(node);
+          node.registerMismatchingSpace(spaceInstance);
+        }
+      });
+
+      return node;
+    });
   }
 
-  isSpacePossible(space: MatrixFilterSpace): boolean {
-    return this.possibleSpaces[this.findSpaceIndex(space)] === 1;
+  // receiver for node points changed
+  onNodePointsChanged(node: Node, oldPoints: number): void {
+    // Remove the node from its old points group
+    if (oldPoints > 0 && this.pointsToNodes[oldPoints]) {
+      this.pointsToNodes[oldPoints].delete(node);
+      if (this.pointsToNodes[oldPoints].size === 0) {
+        delete this.pointsToNodes[oldPoints];
+        if (this.maxPoints === oldPoints) {
+          this.maxPoints = Math.max(...Object.keys(this.pointsToNodes).map(Number)) || null;
+        }
+      }
+    }
+  
+    // Add the node to its new points group if points > 0
+    if (node.isPossible && node.points > 0) {
+      if (!this.pointsToNodes[node.points]) {
+        this.pointsToNodes[node.points] = new Set();
+      }
+      this.pointsToNodes[node.points].add(node);
+  
+      // Update maxPoints
+      if (this.maxPoints === null || node.points > this.maxPoints) {
+        this.maxPoints = node.points;
+      }
+    }
+  
+    // Update currentResult
+    let newResult: Node | null = null;
+    if (this.maxPoints !== null && this.maxPoints > 0) {
+      const nodesWithMaxPoints = Array.from(this.pointsToNodes[this.maxPoints]);
+      newResult = nodesWithMaxPoints.length > 0 ? nodesWithMaxPoints[0] : null;
+    } else {
+      newResult = null;
+    }
+  
+    // Emit event if currentResult changes or if it becomes null
+    if (newResult !== this.currentResult || (newResult === null && this.currentResult !== null)) {
+      this.currentResult = newResult;
+      this.emit(IdentificationStepEvents.IdentificationResultChanged, this.currentResult);
+    }
   }
 
-  isFilterVisible(filter: MatrixFilter): boolean {
-    return this.visibleFilters[this.findFilterIndex(filter)] === 1;
+  /**
+   * Helper methods
+   */
+  selectSpace(spaceIdentifier: string): void {
+    if (this.spaces[spaceIdentifier]) {
+      this.spaces[spaceIdentifier].select();
+    } else {
+      console.warn(`Space with identifier ${spaceIdentifier} not found.`);
+    }
+  }
+
+  deselectSpace(spaceIdentifier: string): void {
+    if (this.spaces[spaceIdentifier]) {
+      this.spaces[spaceIdentifier].deselect();
+    } else {
+      console.warn(`Space with identifier ${spaceIdentifier} not found.`);
+    }
   }
 }

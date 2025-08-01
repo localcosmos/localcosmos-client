@@ -2,6 +2,7 @@ import type { FrontendSettings } from '../types/Settings';
 import type {
   TokenObtainPairSerializerWithClientID,
   LocalcosmosUser,
+  LocalcosmosUserUpdateData,
   Registration
 } from './Authentication';
 import type { CropParameters } from './ProfilePicture';
@@ -130,7 +131,7 @@ export class LocalCosmosApi {
     return await this.performFetch(url, options);
   }
 
-  async updateAccount(token: string, data: LocalcosmosUser) {
+  async updateAccount(token: string, data: LocalcosmosUserUpdateData) {
     const options = {
       headers: this.getAuthedHeaders(token, ContentTypes.json),
       method: 'PUT',
@@ -187,7 +188,7 @@ export class LocalCosmosApi {
     formData.append('sourceImage', image, imageFilename);
 
     if (cropParameters) {
-      formData.append('cropParameters', cropParameters);
+      formData.append('cropParameters', JSON.stringify(cropParameters));
     }
 
     let headers = new Headers();
@@ -277,7 +278,10 @@ export class LocalCosmosApi {
     }
     catch (e) {
       console.log(e);
-      error = `Network error: ${status}`;
+      error = `Network error`;
+      if (status !== null) {
+        error = `Network error: ${status}`;
+      }
     }
 
     const result = {

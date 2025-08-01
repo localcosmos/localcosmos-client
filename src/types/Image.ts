@@ -17,4 +17,6 @@ export type ImageWithTextAndLicence = {
     imageUrl: ImageUrls,
     text?: string,
     licence?: ImageLicence,
+    altText?: string,
+    title?: string,
 }

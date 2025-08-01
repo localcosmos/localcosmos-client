@@ -37,13 +37,17 @@ export type ListFeature = {
 }
 
 export type BackboneTaxonomyFeature = Feature & {
-  vernacular: { 
-    [locale: string]: string
+  search: {
+    taxonLatname: string,
+    vernacular: { 
+      [locale: string]: string
+    },
   },
-  vernacularLookup: {
-    [locale: string]: string
-  }
-  alphabet: string,
+  lookup: {
+    vernacular: {
+      [locale: string]: string
+    }
+  },
   slugs: string,
   localizedSlugs: {
     [locale: string]: string

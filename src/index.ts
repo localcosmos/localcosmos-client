@@ -3,6 +3,8 @@
  */
 export type { ImageUrls, ImageWithTextAndLicence } from './types/Image';
 
+export type { Device } from './types/Cordova';
+export { Platform } from './types/Cordova';
 /**
  * Definitions for the Settings.json file:
  */
@@ -60,17 +62,16 @@ export type {
   TaxonProfile,
   TaxonProfilesSearchIndex,
   TaxonText,
+  CategorizedTexts,
   TaxonProfilesNavigation,
   TaxonProfilesNavigationNode,
 } from './features/TaxonProfiles';
-export type { GlossaryEntry } from './features/Glossary';
 export type {
-  IdentificationKeyReference,
-  DescriptiveTextAndImagesFilterSpace,
-  ColorFilterSpace,
-  TextOnlyFilterSpace,
-  TaxonFilterSpace,
-  MatrixFilterDefinition,
+  GlossaryEntry,
+LocalizedGlossary
+} from './features/Glossary';
+export type {
+  NatureGuideComponent
 } from './features/NatureGuide';
 export type {
   Page,
@@ -91,16 +92,25 @@ export { pointLatLngToFeature, SupportedGeometries, SupportedCRS, GeoJSONFeature
 export { Taxon } from './Taxon';
 export { GenericValueManager } from './api/GenericValueManager';
 export {
-  NatureGuide,
-  IdentificationKey,
-  IdentificationEvents,
-  MatrixFilter,
-  MatrixFilterSpace,
-  IdentificationModes,
-  MatrixFilterType,
-  IdentificationMeans,
-  NodeTypes,
-  ResultActions,
+  Node,
+  DescriptiveTextAndImagesFilter,
+  DescriptiveTextAndImagesFilterSpace,
+  RangeFilter,
+  RangeFilterSpace,
+  NumberFilter,
+  NumberFilterSpace,
+  TextOnlyFilter,
+  TextOnlyFilterSpace,
+  ColorFilter,
+  ColorFilterSpace,
+  TaxonFilter,
+  TaxonFilterSpace,
+  IdentificationStep,
+  MatrixFilterTypes,
+  NodeType,
+  NodeEvents,
+  SpaceEvents,
+  IdentificationStepEvents,
 } from './features/NatureGuide';
 export { ComponentTypes } from './features/TemplateContent'
 
@@ -111,6 +121,11 @@ export { LicenceRegistry } from './legal/LicenceRegistry';
 /**
  * Definitions for Api Requests and Responses
  */
+export type {
+  TemplateContentData,
+  TemplateContentLink,
+} from './api/TemplateContent';
+
 export type {
   DatasetListResponse,
   DatasetListEntry,
