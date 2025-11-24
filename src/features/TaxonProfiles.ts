@@ -6,6 +6,7 @@ import { TaxonProfilesFeature, FeatureBase } from "../types/Features";
 
 import {
   TaxonType,
+  TaxonWithImage,
   SearchTaxon,
   TaxonScientificName,
   TaxonWithSlugsAndImages
@@ -13,6 +14,7 @@ import {
 import { ImageWithTextAndLicence } from '../types/Image';
 import { MatrixFilterDataTypes } from './NatureGuide';
 import { GenericFormReference } from './GenericForm';
+import type { TemplateContentLink } from "../api/TemplateContent";
 
 type StartLetters = {
   taxonLatname: string[],
@@ -146,6 +148,52 @@ export type CategorizedTexts = {
   texts: TaxonText[],
 }
 
+export type TaxonRelationshipType = {
+  name: string,
+  taxonRole: string | null,
+  relatedTaxonRole: string | null
+}
+
+export type TaxonRelationship = {
+  taxon: TaxonWithImage,
+  relatedTaxon: TaxonWithImage,
+  description: string,
+}
+
+export type TypedTaxonRelationships = {
+  relationshipType: TaxonRelationshipType,
+  relationships: TaxonRelationship[]
+}
+
+export enum ExternalMediaType {
+    image = 'image',
+    youtube = 'youtube',
+    mp3 = 'mp3',
+    wav = 'wav',
+    pdf = 'pdf',
+    website = 'website',
+    file = 'file',
+}
+
+export enum ExternalMediaCategory {
+  video = 'video',
+  audio = 'audio',
+  document = 'document',
+}
+
+export type ExternalMedia = {
+  mediaCategory: ExternalMediaCategory | null,
+  mediaType: ExternalMediaType,
+  url: string,
+  title: string,
+  author: string,
+  licence: string | null,
+  caption: string | null,
+  altText: string | null
+}
+
+
+
 export type TaxonProfile = TaxonType & {
   vernacular: {
     [locale: string]: string
@@ -163,7 +211,9 @@ export type TaxonProfile = TaxonType & {
   synonyms: TaxonScientificName[],
   gbifNubKey?: number,
   genericForms?: GenericFormReference[],
-  templateContents?: object[],
+  taxonRelationships: TypedTaxonRelationships[],
+  externalMedia: ExternalMedia[],
+  templateContents?: TemplateContentLink[],
   tags: string[],
 }
 
@@ -367,6 +417,10 @@ export class TaxonProfiles {
 
   search (searchText: string, limit?: number): SearchTaxon[] {
     searchText = searchText.toLowerCase();
+
+    // words as a list
+    const words = searchText.split(' ').filter( (word) => word.length > 0 );
+
     const matches: SearchTaxon[] = [];
     const foundNameUuids: string[] = [];
 
@@ -375,9 +429,31 @@ export class TaxonProfiles {
       const latnameLower = taxonProfile.taxonLatname.toLowerCase();
       const nameLower = taxonProfile.name.toLowerCase();
 
-      if ( ( latnameLower.startsWith(searchText) || nameLower.includes(searchText) ) && !foundNameUuids.includes(taxonProfile.nameUuid)) {
+      const latnameWords = latnameLower.split(' ').filter( (word) => word.length > 0 );
+
+      // startswith should be on top, includes after
+      if ( ( latnameLower.startsWith(searchText) || nameLower.startsWith(searchText) ) && !foundNameUuids.includes(taxonProfile.nameUuid)) {
+        // insert at 0 to prioritize startswith matches
+        matches.unshift(taxonProfile)
+        foundNameUuids.push(taxonProfile.nameUuid)
+      }
+      else if ( ( latnameLower.includes(searchText) || nameLower.includes(searchText) ) && !foundNameUuids.includes(taxonProfile.nameUuid)) {
         matches.push(taxonProfile)
         foundNameUuids.push(taxonProfile.nameUuid)
+      }
+
+      // for example, allow the searchtext  "tur mer" to find "turdus merula"
+      if (words.length == 2) {
+        const firstWord = words[0];
+        const secondWord = words[1];
+
+        const firstWordMatches = latnameWords.some( (word) => word.startsWith(firstWord) );
+        const secondWordMatches = latnameWords.some( (word) => word.startsWith(secondWord) );
+
+        if ( firstWordMatches && secondWordMatches && !foundNameUuids.includes(taxonProfile.nameUuid) ) {
+          matches.push(taxonProfile)
+          foundNameUuids.push(taxonProfile.nameUuid)
+        }
       }
 
       if (limit && matches.length >= limit) {

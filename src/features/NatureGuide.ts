@@ -94,7 +94,7 @@ export type ColorFilterSpaceData = MatrixFilterSpaceData & {
   html: string,
   gradient: boolean,
   colorType: ColorTypes,
-  desciption: string|null,
+  description: string|null,
 }
 
 export type MatrixFilterSpaceDataTypes = DescriptiveTextAndImagesFilterSpaceData | RangeFilterSpaceData | NumberFilterSpaceData | TextOnlyFilterSpaceData | ColorFilterSpaceData | TaxonFilterSpaceData;

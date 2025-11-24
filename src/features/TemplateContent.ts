@@ -3,6 +3,7 @@
  */
 
 import { ImageUrls, ImageLicence } from "../types/Image";
+import type { TaxonType, TaxonWithImage } from "./BackboneTaxonomy";
 
 export type TemplateContent = {
   title: string
@@ -41,6 +42,8 @@ export type Page = TemplateContent & {
   templateName: string
   templateUrl: string
   contents: Record<string, any>
+  linkedTaxa: TaxonType[]
+  linkedTaxonProfiles: TaxonWithImage[]
 }
 
 export type TemplateContentNavigationEntry = {

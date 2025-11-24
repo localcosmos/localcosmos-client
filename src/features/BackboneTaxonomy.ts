@@ -43,6 +43,9 @@ export type TaxonWithImage = TaxonType & {
   gbifNubKey?: number,
   image: ImageWithTextAndLicence,
   shortProfile: string,
+  slug: string | null,
+  localizedSlug: Record<string, string>,
+  hasTaxonProfile: boolean,
 }
 
 export type TaxonWithImages = TaxonType & {
@@ -53,7 +56,7 @@ export type TaxonWithImages = TaxonType & {
 
 export type TaxonWithSlugsAndImages = TaxonWithImages & {
   slug: string,
-  localizedSlugs: Record<string, string>,
+  localizedSlug: Record<string, string>,
 }
 
 export type SearchTaxon = BackboneTaxon & {
@@ -62,6 +65,8 @@ export type SearchTaxon = BackboneTaxon & {
   isPreferredName: boolean,
   acceptedNameUuid: string,
   hasTaxonProfile: boolean,
+  slug: string | null,
+  localizedSlug: Record<string, string>,
 }
 /**
  * localcosmos/features/BackboneTaxonomy/vernacular/{language_code}.json
