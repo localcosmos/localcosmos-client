@@ -70,6 +70,9 @@ export type TaxonProfilesFeature = Feature & {
   localizedFiles : {
     [locale: string]: string,
   },
+  localizedMorphotypeFiles: {
+    [locale: string]: string,
+  },
   localizedRegistries: {
     [locale: string]: string,
   },
@@ -94,7 +97,7 @@ export type TemplateContentSlug = {
 export type TemplateContentFeature = ListFeature & {
   slugs: Record<string, TemplateContentSlug>,
   assignments: {
-    string: Record<string, Record<string, string>>
+    [name:string]: Record<string, string>
   },
   navigations: Record<string, Record<string, string>>
 }

@@ -56,13 +56,15 @@ export type TaxonProfilesSearchIndex = {
 
 export type TaxonProfilesRegistryEntry = TaxonType & {
   image: ImageWithTextAndLicence | null,
-  shortProfile: string,
+  shortProfile: string |  null,
   nameType: string,
   name: string,
   isPreferredName: boolean,
   acceptedNameUuid: string | null,
   hasTaxonProfile: boolean,
   vernacularNames: VernacularNamesDict,
+  slug: string,
+  localizedSlug: Record<string, string>,
 }
 
 /**
@@ -192,15 +194,27 @@ export type ExternalMedia = {
   altText: string | null
 }
 
-
+export type MorphotypeReference = {
+  taxonProfileId: number,
+  parentTaxonProfileId: number,
+  morphotype: string,
+  taxon: TaxonWithImage,
+  vernacular: {
+    [languageCode: string]: string
+  },
+  image: ImageWithTextAndLicence,
+}
 
 export type TaxonProfile = TaxonType & {
+  morphotype: string | null,
   vernacular: {
     [locale: string]: string
   },
   allVernacularNames: {
     [locale: string]: string
   },
+  slug: string,
+  localizedSlug: Record<string, string>,
   nodeNames: string[],
   nodeDecisionRules: any, // todo: unknown
   traits: Trait[],
@@ -215,6 +229,11 @@ export type TaxonProfile = TaxonType & {
   externalMedia: ExternalMedia[],
   templateContents?: TemplateContentLink[],
   tags: string[],
+  seo: {
+    title: string,
+    metaDescription: string,
+  },
+  morphotypeProfiles: MorphotypeReference[],
 }
 
 
@@ -335,6 +354,24 @@ export class TaxonProfiles {
         try {
           const localizedTaxonProfile = await response.json() as TaxonProfile;
           return localizedTaxonProfile;
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    }
+
+    return null;
+  }
+
+  async getLocalizedMorphotypeProfile (nameUuid: string, morphotype: string, language: string): Promise<TaxonProfile | null> {
+    if (nameUuid in this.registry) {
+      const taxon = this.registry[nameUuid];
+      const localizedMorphotypeProfilePath = `${this.taxonProfilesFeature.localizedMorphotypeFiles[language]}/${taxon.taxonSource}/${taxon.nameUuid}_${morphotype}.json`;
+      const response = await fetch(localizedMorphotypeProfilePath);
+      if (response.ok) {
+        try {
+          const localizedMorphotypeProfile = await response.json() as TaxonProfile;
+          return localizedMorphotypeProfile;
         } catch (e) {
           console.log(e);
         }

@@ -10,6 +10,7 @@ type FrontendAdditionalSettings = {
 type AppOptions = {
   allowAnonymousObservations: boolean,
   doNotBuildLargeImages: boolean,
+  version?: string | null,
 }
 
 type UserContentItem = {

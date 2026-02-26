@@ -924,6 +924,8 @@ export class IdentificationStep extends EventEmitter {
   uuid: string;
   slug: string;
   name: string;
+  description: string|null;
+  overviewImage: ImageUrls|null;
   nodes: Node[];
   matrixFilters: Record<string, MatrixFilters> = {}; // Use a Record for matrixFilters
   spaces: Record<string, MatrixFilterSpaces> = {}; // Use a Record for spaces
@@ -939,6 +941,8 @@ export class IdentificationStep extends EventEmitter {
     this.uuid = data.uuid;
     this.slug = data.slug;
     this.name = data.name;
+    this.description = data.description;
+    this.overviewImage = data.overviewImage;
 
     // Populate matrixFilters and spaces as Records
     for (const [matrixfilterUuid, filterData] of Object.entries(data.matrixFilters)) {

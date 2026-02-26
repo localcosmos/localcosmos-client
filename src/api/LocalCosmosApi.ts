@@ -10,7 +10,8 @@ import type { CropParameters } from './ProfilePicture';
 import type { GenericForm } from '../features/GenericForm';
 import type { Dataset, DatasetCreateRequest, DatasetFilterRequest, Operators } from './Dataset';
 import type { ObservationFormCreateRequest } from './ObservationForm';
-import type { ContactUserReqest } from './ContactUser';
+import type { ContactUserRequest } from './ContactUser';
+import type { ContactStaffRequest } from './ContactStaff';
 
 import type { CreateLogEntryRequest } from '../types/Analytics';
 
@@ -612,7 +613,7 @@ export class LocalCosmosApi {
 
     const headers = this.getAuthedHeaders(token, ContentTypes.json);
 
-    const body:ContactUserReqest = {
+    const body:ContactUserRequest = {
       "subject": subject,
       "message": message
     };
@@ -624,6 +625,28 @@ export class LocalCosmosApi {
     };
 
     const url = this.getUrl(`/contact-user/${uuid}/`);
+
+    return this.performFetch(url, options);
+  }
+
+  async sendStaffMessage(name:string, email:string, subject:string|null, message:string, page:string, website:string|null): Promise<LCApiRequestResult> {
+    
+    const body:ContactStaffRequest = {
+      "name": name,
+      "email": email,
+      "subject": subject,
+      "message": message,
+      "page": page,
+      "website": website
+    };
+
+    const options = {
+      method: 'POST',
+      headers: this.getHeaders(ContentTypes.json),
+      body: JSON.stringify(body)
+    };
+
+    const url = this.getUrl(`/contact-staff/`);
 
     return this.performFetch(url, options);
   }
