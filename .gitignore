@@ -4,3 +4,4 @@ dist
 lib
 .parcel-cache
 coverage
+.npmrc
