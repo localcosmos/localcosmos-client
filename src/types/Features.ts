@@ -107,12 +107,17 @@ export type NatureGuideListFeature = {
   lookup: Record<string, string>,
 }
 
-export type LocalizedGlossaries = {
-  usedTerms: string,
-  allTerms: string,
+export type GlossaryCategoryLocalizedPaths = {
+  [locale: string]: string,
 }
+
+export type GlossaryCategorized = {
+  [category: string]: GlossaryCategoryLocalizedPaths,
+}
+
 export type GlossaryFeature = Feature & {
-  localized: Record<string, LocalizedGlossaries>
+  localized: Record<string, Record<string, string>>,
+  categorized: GlossaryCategorized
 }
 
 export interface Features {

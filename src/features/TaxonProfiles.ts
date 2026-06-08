@@ -205,6 +205,12 @@ export type MorphotypeReference = {
   image: ImageWithTextAndLicence,
 }
 
+export type ClassificationEntry = {
+  taxonLatname: string,
+  taxonAuthor: string | null,
+  rank: string, 
+}
+
 export type TaxonProfile = TaxonType & {
   morphotype: string | null,
   vernacular: {
@@ -223,6 +229,7 @@ export type TaxonProfile = TaxonType & {
   categorizedTexts: CategorizedTexts[],
   images: TaxonImageSet,
   synonyms: TaxonScientificName[],
+  classification: ClassificationEntry[],
   gbifNubKey?: number,
   genericForms?: GenericFormReference[],
   taxonRelationships: TypedTaxonRelationships[],
