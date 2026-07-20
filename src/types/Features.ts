@@ -31,7 +31,7 @@ export type Feature = FeatureBase & {
   taxonomicRestrictions?: TaxonomicRestriction[],
 }
 
-export type ListFeature = {
+export type ListFeature = FeatureBase & {
   list: Feature[],
   lookup: Record<string, string>
 }
@@ -95,11 +95,15 @@ export type TemplateContentSlug = {
 }
 
 export type TemplateContentFeature = ListFeature & {
+  path: string,
   slugs: Record<string, TemplateContentSlug>,
   assignments: {
     [name:string]: Record<string, string>
   },
   navigations: Record<string, Record<string, string>>
+  byTemplateName: {
+    [locale: string] : string
+  }
 }
 
 export type NatureGuideListFeature = {

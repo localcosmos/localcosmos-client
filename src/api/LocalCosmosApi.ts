@@ -695,4 +695,5 @@ export class LocalCosmosApi {
 
     return this.performFetch(url, options);
   }
+
 }

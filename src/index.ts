@@ -112,7 +112,9 @@ export {
   SpaceEvents,
   IdentificationStepEvents,
 } from './features/NatureGuide';
-export { ComponentTypes } from './features/TemplateContent'
+
+export { ComponentTypes, TemplateContent } from './features/TemplateContent';
+export type { TemplateContentSlugsByTemplateName } from './features/TemplateContent';
 
 export { MapTypes } from './features/Map';
 

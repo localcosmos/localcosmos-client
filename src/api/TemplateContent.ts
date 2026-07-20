@@ -1,7 +1,7 @@
 export type TemplateContentData = {
     title: string,
+    autho: string,
     templateName: string
-    templatePath: string
     version: number,
     contents: Record<string,string>,
 }
@@ -11,5 +11,6 @@ export type TemplateContentLink = {
     slug: string,
     templateName: string,
     title: string,
+    author: string,
     url: string,
 }
